@@ -1,0 +1,37 @@
+((author "Diego Mundo")
+ (synopsis "Chicken port of Racket's math library")
+ (category math)
+ (license "GPL-3.0")
+ (component-options
+  (csc-options "-O3"))
+ (dependencies srfi-1 srfi-4 iset miscmacros)
+ (components
+
+  ;; Number theory
+  (extension math.number-theory
+             (source "number-theory.scm")
+             (component-dependencies math.private.divisibility
+                                     math.private.modular-arithmetic
+                                     math.private.number-theory
+                                     math.private.factorial))
+  (extension math.private.base-random
+             (source "private/base/math.private.base-random.scm"))
+
+  (extension math.private.small-primes
+             (source "private/number-theory/math.private.small-primes.scm"))
+
+  (extension math.private.divisibility
+             (source "private/number-theory/math.private.divisibility.scm"))
+
+  (extension math.private.modular-arithmetic
+             (source "private/number-theory/math.private.modular-arithmetic.scm")
+             (component-dependencies math.private.divisibility))
+
+  (extension math.private.number-theory
+             (source "private/number-theory/math.private.number-theory.scm")
+             (component-dependencies math.private.modular-arithmetic
+                                     math.private.divisibility
+                                     math.private.small-primes
+                                     math.private.base-random))
+  (extension math.private.factorial
+             (source "private/number-theory/math.private.factorial.scm"))))
