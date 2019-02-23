@@ -51,7 +51,7 @@
                 bit-vector-set!
                 bit-vector-ref))
 
-  (define natural? (conjoin positive? integer?))
+  (define natural? (conjoin (complement negative?) integer?))
 
   (define (andmap fn ls0)
     (let mapf ((ls ls0))

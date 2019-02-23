@@ -8,7 +8,7 @@
           srfi-1
           (only miscmacros ensure))
 
-  (define natural? (conjoin positive? integer?))
+  (define natural? (conjoin (complement negative?) integer?))
 
   (define fact-table-size 171)
 

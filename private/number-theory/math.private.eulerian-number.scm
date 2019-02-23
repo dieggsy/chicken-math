@@ -3,7 +3,7 @@
           chicken.base
           miscmacros)
 
-  (define natural? (conjoin positive? integer?))
+  (define natural? (conjoin (complement negative?) integer?))
   ;;   computes the Eulerian number <n,k>
   ;;   http://mathworld.wolfram.com/EulerianNumber.html
   (define (eulerian-number* n k)

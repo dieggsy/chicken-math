@@ -3,7 +3,7 @@
           chicken.base
           miscmacros)
 
-  (define natural? (conjoin positive? integer?))
+  (define natural? (conjoin (complement negative?) integer?))
 
   (define (binomial* n k)
     ;;  compute the binomial coeffecient n choose k
