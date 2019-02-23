@@ -75,5 +75,5 @@
 
   (define (bernoulli-number n)
     (cond [(< n 0)
-           (error 'bernoulli-number "bad argument type - not a positive integer" n)]
+           (error 'bernoulli-number "bad argument type - not a nonnegative integer" n)]
           [else  (bernoulli* n)])))

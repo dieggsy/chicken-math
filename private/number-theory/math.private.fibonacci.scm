@@ -21,7 +21,7 @@
                  (- count 1))]))
 
   (define ((make-fibonacci a b) n)
-    (cond [(< n 0) (error 'fibonacci "bad argument type - not a positive integer" n)]
+    (cond [(< n 0) (error 'fibonacci "bad argument type - not a nonnegative integer" n)]
           [else  (generator b a 0 1 n)]))
 
   (define fibonacci (make-fibonacci 0 1))

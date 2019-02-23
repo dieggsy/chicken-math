@@ -25,8 +25,8 @@
                        (loop1 (* prod (/ (+ n (- k) i) i)) (add1 i)))))]))))
 
   (define (binomial n k)
-    (cond [(< n 0) (error 'binomial "bad argument type - not a positive integer" n)]
-          [(< k 0) (error 'binomial "bad argument type - not a positive integer" k)]
+    (cond [(< n 0) (error 'binomial "bad argument type - not a nonnegative integer" n)]
+          [(< k 0) (error 'binomial "bad argument type - not a nonnegative integer" k)]
           [(zero? k) 1]
           [(eqv? n 1) (if (eqv? k 1) 1 (binomial* n k))]
           [else (binomial* n k)])))

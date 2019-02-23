@@ -243,7 +243,7 @@
   (define (next-primes m primes-wanted)
     (cond
      [(< primes-wanted 0)
-      (error 'next-primes "bad argument type - not a positive integer" primes-wanted)]
+      (error 'next-primes "bad argument type - not a nonnegative integer" primes-wanted)]
      [else
       (let loop ((n m)
                  (primes-wanted primes-wanted))
@@ -256,7 +256,7 @@
 
   (define (prev-primes m primes-wanted)
     (cond
-     [(< primes-wanted 0) (error 'next-primes "bad argument type - not a positive integer" primes-wanted)]
+     [(< primes-wanted 0) (error 'next-primes "bad argument type - not a nonnegative integer" primes-wanted)]
      [else
       (let loop ((n m)
                  (primes-wanted primes-wanted))
@@ -268,7 +268,7 @@
                   '()))))]))
 
   (define (nth-prime n)
-    (cond [(< n 0) (error 'next-primes "bad argument type - not a positive integer" n)]
+    (cond [(< n 0) (error 'next-primes "bad argument type - not a nonnegative integer" n)]
           [else
            (let loop ((m 0)
                       (p 2))

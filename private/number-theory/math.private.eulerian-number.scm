@@ -23,6 +23,6 @@
              (ensure natural? (vector-ref E k)))]))
 
   (define (eulerian-number n k)
-    (cond [(< n 0) (error 'eulerian-number "bad argument type - not a positive integer" n)]
-          [(< k 0) (error 'eulerian-number "bad argument type - not a positive integer" k)]
+    (cond [(< n 0) (error 'eulerian-number "bad argument type - not a nonnegative integer" n)]
+          [(< k 0) (error 'eulerian-number "bad argument type - not a nonnegative integer" k)]
           [else  (eulerian-number* n k)])))

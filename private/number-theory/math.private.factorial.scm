@@ -27,7 +27,7 @@
           [else (* n (factorial-simple (- n 1)))]))
 
   (define (factorial n)
-    (cond [(negative? n) (error 'factorial "bad argument type - not a positive integer" n)]
+    (cond [(negative? n) (error 'factorial "bad argument type - not a nonnegative integer" n)]
           [(not (fixnum? n)) (error 'factorial "bad argument type - not a nonnegative fixnum" n)]
           [(eqv? n 0)  1]
           [(eqv? n 1)  1]
@@ -41,16 +41,16 @@
                             (* (loop n 2m) (loop n-m 2m)))]))]))
 
   (define (permutations n k)
-    (cond [(negative? n) (error 'permutations "bad argument type - not a positive integer" n)]
-          [(negative? k) (error 'permutations "bad argument type - not a positive integer" k)]
+    (cond [(negative? n) (error 'permutations "bad argument type - not a nonnegative integer" n)]
+          [(negative? k) (error 'permutations "bad argument type - not a nonnegative integer" k)]
           [(zero? k)  1]
           [(> k n)  0]
           [else  (ensure natural?
                          (/ (factorial n) (factorial (- n k))))]))
 
   (define (multinomial n ks)
-    (cond [(negative? n) (error 'multinomial "bad argument type - not a positive integer" n)]
-          [(find negative? ks) (error 'multinomial "bad argument type - not a list of positive integers" ks)]
+    (cond [(negative? n) (error 'multinomial "bad argument type - not a nonnegative integer" n)]
+          [(find negative? ks) (error 'multinomial "bad argument type - not a list of nonnegative integers" ks)]
           [(not (= n (apply + ks)))  0]
           [else  (ensure natural?
                          (apply / (factorial n) (map factorial ks)))]))
