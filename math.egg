@@ -18,7 +18,8 @@
                                      math.private.bernoulli
                                      math.private.eulerian-number
                                      math.private.farey
-                                     math.private.fibonacci))
+                                     math.private.fibonacci
+                                     math.private.partitions))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -52,6 +53,8 @@
              (source "private/number-theory/math.private.farey.scm"))
   (extension math.private.fibonacci
              (source "private/number-theory/math.private.fibonacci.scm"))
+  (extension  math.private.partitions
+              (source "private/number-theory/math.private.partitions.scm"))
 
   ;; Vector
   (extension math.private.vector
