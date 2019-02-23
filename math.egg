@@ -55,6 +55,12 @@
              (source "private/number-theory/math.private.fibonacci.scm"))
   (extension  math.private.partitions
               (source "private/number-theory/math.private.partitions.scm"))
+  (extension math.private.quadratic
+             (source "private/number-theory/math.private.quadratic.scm"))
+  (extension math.private.polygonal
+             (source "private/number-theory/math.private.polygonal.scm")
+             (component-dependencies math.private.number-theory
+                                     math.private.quadratic))
 
   ;; Vector
   (extension math.private.vector
