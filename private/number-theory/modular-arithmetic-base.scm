@@ -28,7 +28,7 @@
         (else (error 'modular-inverse (format "bad argument typea - not coprime to modulus ~A: ~A" n a)))))
 
 (define (modular-expt* n a b)
-  (cond [(< b 0)  (error 'modular-expt (format "bad argument type - not a natural number: ~A" b))]
+  (cond [(< b 0)  (error 'modular-expt (format "bad argument type - not a positive integer: ~A" b))]
         [else
          (let loop ([a a] [b b])
            (cond [(<= b 1)  (if (zero? b) (modulo 1 n) (modulo a n))]

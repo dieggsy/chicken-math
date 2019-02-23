@@ -9,6 +9,8 @@
           srfi-1
           (only miscmacros ensure))
 
+  (define natural? (conjoin positive? integer?))
+
   (define fact-table-size 171)
 
   (define fact-table
@@ -26,7 +28,7 @@
           [else (* n (factorial-simple (- n 1)))]))
 
   (define (factorial n)
-    (cond [(negative? n) (error 'factorial (format "bad argument type - not a natural number: ~A" n))]
+    (cond [(negative? n) (error 'factorial (format "bad argument type - not a positive integer: ~A" n))]
           [(not (fixnum? n)) (error 'factorial (format "bad argument type - not a nonnegative fixnum: ~A" n))]
           [(eqv? n 0)  1]
           [(eqv? n 1)  1]
@@ -40,17 +42,17 @@
                             (* (loop n 2m) (loop n-m 2m)))]))]))
 
   (define (permutations n k)
-    (cond [(negative? n) (error 'permutations (format "bad argument type - not a natural number: ~A" n))]
-          [(negative? k) (error 'permutations (format "Bad orgument type - not a natural number: ~A" k))]
+    (cond [(negative? n) (error 'permutations (format "bad argument type - not a positive integer: ~A" n))]
+          [(negative? k) (error 'permutations (format "Bad orgument type - not a positive integer: ~A" k))]
           [(zero? k)  1]
           [(> k n)  0]
-          [else  (ensure (conjoin positive? integer?)
+          [else  (ensure natural?
                          (/ (factorial n) (factorial (- n k))))]))
 
   (define (multinomial n ks)
-    (cond [(negative? n) (error 'multinomial (format "bad argument type - not a natural number: ~A" n))]
-          [(find negative? ks) (error 'multinomial (format "bad argument type - not a list of natural numbers: ~A" ks))]
+    (cond [(negative? n) (error 'multinomial (format "bad argument type - not a positive integer: ~A" n))]
+          [(find negative? ks) (error 'multinomial (format "bad argument type - not a list of positive integers: ~A" ks))]
           [(not (= n (apply + ks)))  0]
-          [else  (ensure (conjoin positive? integer?)
+          [else  (ensure natural?
                          (apply / (factorial n) (map factorial ks)))]))
   )

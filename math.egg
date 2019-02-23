@@ -9,11 +9,13 @@
 
   ;; Number theory
   (extension math.number-theory
-             (source "number-theory.scm")
+             (source "math.number-theory.scm")
              (component-dependencies math.private.divisibility
                                      math.private.modular-arithmetic
                                      math.private.number-theory
-                                     math.private.factorial))
+                                     math.private.factorial
+                                     math.private.binomial
+                                     math.private.bernoulli))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -34,4 +36,12 @@
                                      math.private.small-primes
                                      math.private.base-random))
   (extension math.private.factorial
-             (source "private/number-theory/math.private.factorial.scm"))))
+             (source "private/number-theory/math.private.factorial.scm"))
+  (extension math.private.binomial
+             (source "private/number-theory/math.private.binomial.scm"))
+  (extension math.private.vector
+             (source "private/vector/math.private.vector.scm"))
+  (extension math.private.bernoulli
+             (source "private/number-theory/math.private.bernoulli.scm")
+             (component-dependencies math.private.binomial
+                                     math.private.vector))))
