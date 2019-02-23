@@ -4,7 +4,6 @@
 
   (import scheme
           chicken.base
-          chicken.format
           chicken.fixnum
           srfi-1
           (only miscmacros ensure))
@@ -28,8 +27,8 @@
           [else (* n (factorial-simple (- n 1)))]))
 
   (define (factorial n)
-    (cond [(negative? n) (error 'factorial (format "bad argument type - not a positive integer: ~A" n))]
-          [(not (fixnum? n)) (error 'factorial (format "bad argument type - not a nonnegative fixnum: ~A" n))]
+    (cond [(negative? n) (error 'factorial "bad argument type - not a positive integer" n)]
+          [(not (fixnum? n)) (error 'factorial "bad argument type - not a nonnegative fixnum" n)]
           [(eqv? n 0)  1]
           [(eqv? n 1)  1]
           [(< n simple-cutoff)  (factorial-simple n)]
@@ -42,16 +41,16 @@
                             (* (loop n 2m) (loop n-m 2m)))]))]))
 
   (define (permutations n k)
-    (cond [(negative? n) (error 'permutations (format "bad argument type - not a positive integer: ~A" n))]
-          [(negative? k) (error 'permutations (format "Bad orgument type - not a positive integer: ~A" k))]
+    (cond [(negative? n) (error 'permutations "bad argument type - not a positive integer" n)]
+          [(negative? k) (error 'permutations "bad argument type - not a positive integer" k)]
           [(zero? k)  1]
           [(> k n)  0]
           [else  (ensure natural?
                          (/ (factorial n) (factorial (- n k))))]))
 
   (define (multinomial n ks)
-    (cond [(negative? n) (error 'multinomial (format "bad argument type - not a positive integer: ~A" n))]
-          [(find negative? ks) (error 'multinomial (format "bad argument type - not a list of positive integers: ~A" ks))]
+    (cond [(negative? n) (error 'multinomial "bad argument type - not a positive integer" n)]
+          [(find negative? ks) (error 'multinomial "bad argument type - not a list of positive integers" ks)]
           [(not (= n (apply + ks)))  0]
           [else  (ensure natural?
                          (apply / (factorial n) (map factorial ks)))]))

@@ -16,19 +16,18 @@
 ;;                                  inline-mod>=)
 ;;   (import scheme
 ;;           chicken.base
-;;           chicken.format
 ;;           divisibility
 ;;           miscmacros))
 
 (define current-modulus (make-parameter 1))
 
 (define (modular-inverse* n a)
-  (cond ((zero? a) (error 'modular-inverse (format "bad argument type - not a nonzero integer: ~A" a)))
+  (cond ((zero? a) (error 'modular-inverse "bad argument type - not a nonzero integer" a))
         ((coprime? n a) (modulo (car (bezout a n)) n))
         (else (error 'modular-inverse (format "bad argument typea - not coprime to modulus ~A: ~A" n a)))))
 
 (define (modular-expt* n a b)
-  (cond [(< b 0)  (error 'modular-expt (format "bad argument type - not a positive integer: ~A" b))]
+  (cond [(< b 0)  (error 'modular-expt "bad argument type - not a positive integer" b)]
         [else
          (let loop ([a a] [b b])
            (cond [(<= b 1)  (if (zero? b) (modulo 1 n) (modulo a n))]

@@ -3,7 +3,6 @@
                                   random-integer)
   (import scheme
           chicken.base
-          chicken.format
           chicken.bitwise
           chicken.fixnum
           chicken.random)
@@ -13,7 +12,7 @@
   (define block-size (arithmetic-shift 1 block-bits))
 
   (define (random-bits bits)
-    (cond [(<= bits 0) (error 'random-bits (format "bad argument type - not a positive integer: ~A" bits))]
+    (cond [(<= bits 0) (error 'random-bits "bad argument type - not a positive integer" bits)]
           [else
            (let ((max-blocks (quotient bits block-bits))
                  (rem-bits (remainder bits block-bits)))
@@ -33,7 +32,7 @@
   (define (random-natural n)
     (cond
      [(<= n 0)
-      (error 'random-natural (format "bad argument type - not a positive integer: ~A" n))]
+      (error 'random-natural "bad argument type - not a positive integer" n)]
      [(<= n random-max)  (random n)]
      [else
       ;; Rejection sampling has rejection probability approaching 1/2 in the worst cases; that is,

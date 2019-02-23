@@ -1,7 +1,6 @@
 (module math.private.bernoulli (bernoulli-number)
   (import scheme
           chicken.base
-          chicken.format
           math.private.binomial
           math.private.vector
           miscmacros)
@@ -76,5 +75,5 @@
 
   (define (bernoulli-number n)
     (cond [(< n 0)
-           (error 'bernoulli-number (format "bad argument type - not a positive integer: ~A" n))]
+           (error 'bernoulli-number "bad argument type - not a positive integer" n)]
           [else  (bernoulli* n)])))

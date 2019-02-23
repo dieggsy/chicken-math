@@ -39,7 +39,6 @@
   (import scheme
           chicken.base
           chicken.bitwise
-          chicken.format
           chicken.sort
           srfi-1
           math.private.small-primes
@@ -121,7 +120,7 @@
   ;; Example : (solve-chinese '(2 3 2) '(3 5 7)) = 23
   (define (solve-chinese as ns)
     (unless (andmap positive? ns)
-      (error 'solve-chinese (format "bad argument type - not a list of positive integers: ~A" ns)))
+      (error 'solve-chinese "bad argument type - not a list of positive integers" ns))
     ;; the ns should be coprime
     (let* ([n  (apply * ns)]
            [cs (map (lambda (ni) (quotient n ni)) ns)]
@@ -145,7 +144,7 @@
   ;; [MCA, p.509 - Algorithm 18.5]
   (define (prime-strong-pseudo-single? n)
     (cond
-     [(<= n 0) (error 'prime-strong-pseudo-single? (format "bad argument type - not a positive integer: ~A" n))]
+     [(<= n 0) (error 'prime-strong-pseudo-single? "bad argument type - not a positive integer" n)]
      [(>= n 4)
       (let* ((a (random-integer 2 (- n 1)))
              (g (gcd a n)))
@@ -244,7 +243,7 @@
   (define (next-primes m primes-wanted)
     (cond
      [(< primes-wanted 0)
-      (error 'next-primes (format "bad argumnet type - not a positive integer: ~A" primes-wanted))]
+      (error 'next-primes "bad argument type - not a positive integer" primes-wanted)]
      [else
       (let loop ((n m)
                  (primes-wanted primes-wanted))
@@ -257,7 +256,7 @@
 
   (define (prev-primes m primes-wanted)
     (cond
-     [(< primes-wanted 0) (error 'next-primes (format "bad argumnet type - not a positive integer: ~A" primes-wanted))]
+     [(< primes-wanted 0) (error 'next-primes "bad argument type - not a positive integer" primes-wanted)]
      [else
       (let loop ((n m)
                  (primes-wanted primes-wanted))
@@ -269,7 +268,7 @@
                   '()))))]))
 
   (define (nth-prime n)
-    (cond [(< n 0) (error 'next-primes (format "bad argument type - not a positive integer: ~A" n))]
+    (cond [(< n 0) (error 'next-primes "bad argument type - not a positive integer" n)]
           [else
            (let loop ((m 0)
                       (p 2))
@@ -279,7 +278,7 @@
 
   (define (random-prime n)
     (when (<= n 2)
-      (error 'random-prime (format "bad argument type - not a positive integer greater than 2: ~A" n)))
+      (error 'random-prime "bad argument type - not a positive integer greater than 2" n))
     (define p (random-natural n))
     (if (prime? p)
         p
@@ -308,7 +307,7 @@
   ;; Factor a number n without prime factors below the prime p.
   (define (small-prime-factors-over n p) ; p prime
     (cond [(<= p 0)
-           (error 'small-prime-factors-over (format "bad argument type - not a positive integer: ~A" p))]
+           (error 'small-prime-factors-over "bad argument type - not a positive integer" p)]
           [(< n p) '()]
           [(= n p) (list (list p 1))]
           [(prime? n) (list (list n 1))]
@@ -630,7 +629,7 @@
 
   (define (mangoldt-lambda n)
     (cond
-     [(<= n 0) (error 'mangoldt-lambda (format "bad argument type - not a positive integer: ~A" n))]
+     [(<= n 0) (error 'mangoldt-lambda "bad argument type - not a positive integer" n)]
      [else (let ((am (prime-power n)))
              (cond
               [(pair? am) (log (car am))]

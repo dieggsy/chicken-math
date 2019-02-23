@@ -1,8 +1,7 @@
 (module math.private.vector (vector-ref!)
   (import scheme
           chicken.base
-          chicken.fixnum
-          chicken.format)
+          chicken.fixnum)
   (define vector-ref!
     (case-lambda
       [(vs i thnk)  (vector-ref! vs i thnk not)]
