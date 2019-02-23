@@ -16,7 +16,9 @@
                                      math.private.factorial
                                      math.private.binomial
                                      math.private.bernoulli
-                                     math.private.eulerian-number))
+                                     math.private.eulerian-number
+                                     math.private.farey
+                                     math.private.fibonacci))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -46,6 +48,10 @@
                                      math.private.vector))
   (extension math.private.eulerian-number
              (source "private/number-theory/math.private.eulerian-number.scm"))
+  (extension math.private.farey
+             (source "private/number-theory/math.private.farey.scm"))
+  (extension math.private.fibonacci
+             (source "private/number-theory/math.private.fibonacci.scm"))
 
   ;; Vector
   (extension math.private.vector
