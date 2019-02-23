@@ -11,5 +11,4 @@
   (reexport math.private.factorial)
   (reexport math.private.binomial)
   (reexport math.private.bernoulli)
-  ;; (reexport math.private.eulerian-number)
-  )
+  (reexport math.private.eulerian-number))

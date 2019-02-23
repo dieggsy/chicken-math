@@ -15,7 +15,8 @@
                                      math.private.number-theory
                                      math.private.factorial
                                      math.private.binomial
-                                     math.private.bernoulli))
+                                     math.private.bernoulli
+                                     math.private.eulerian-number))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -39,9 +40,14 @@
              (source "private/number-theory/math.private.factorial.scm"))
   (extension math.private.binomial
              (source "private/number-theory/math.private.binomial.scm"))
-  (extension math.private.vector
-             (source "private/vector/math.private.vector.scm"))
   (extension math.private.bernoulli
              (source "private/number-theory/math.private.bernoulli.scm")
              (component-dependencies math.private.binomial
-                                     math.private.vector))))
+                                     math.private.vector))
+  (extension math.private.eulerian-number
+             (source "private/number-theory/math.private.eulerian-number.scm"))
+
+  ;; Vector
+  (extension math.private.vector
+             (source "private/vector/math.private.vector.scm"))
+  ))
