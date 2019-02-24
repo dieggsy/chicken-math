@@ -61,7 +61,7 @@
                   ((null? d))
                 (define y (ensure fixnum? (fx+ y-base (fx* (car d) x))))
                 (when (not (fx= y x))
-                  (if (fx= y *SMALL-PRIME-LIMIT*)
+                  (if (fx<= y *SMALL-PRIME-LIMIT*)
                       (clear-bit! y)
                       (exit (void)))))
               (loop (ensure fixnum? (add1 a))))))

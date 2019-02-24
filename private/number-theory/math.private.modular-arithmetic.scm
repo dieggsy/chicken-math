@@ -18,6 +18,7 @@
   (import scheme
           chicken.base
           chicken.format
+          srfi-1
           math.private.divisibility
           miscmacros)
 
@@ -47,9 +48,9 @@
       [(a b)  (modulo (+ a b) (current-modulus))]
       [(a b . cs)
        (define n (current-modulus))
-       (foldl (lambda (x y) (modulo (+ x y) n))
-              (modulo (+ a b) n)
-              cs)]))
+       (fold (lambda (x y) (modulo (+ x y) n))
+             (modulo (+ a b) n)
+             cs)]))
 
   (define mod-
     (case-lambda
@@ -57,9 +58,9 @@
       [(a b)  (modulo (- a b) (current-modulus))]
       [(a b . cs)
        (define n (current-modulus))
-       (foldl (lambda (x y) (modulo (- x y) n))
-              (modulo (- a b) n)
-              cs)]))
+       (fold (lambda (x y) (modulo (- x y) n))
+             (modulo (- a b) n)
+             cs)]))
 
   (define mod*
     (case-lambda
@@ -68,9 +69,9 @@
       [(a b)  (modulo (* a b) (current-modulus))]
       [(a b . cs)
        (define n (current-modulus))
-       (foldl (lambda (x y) (modulo (* x y) n))
-              (modulo (* a b) n)
-              cs)]))
+       (fold (lambda (x y) (modulo (* x y) n))
+             (modulo (* a b) n)
+             cs)]))
   (define mod/
     (case-lambda
       [(a)  (modular-inverse a (current-modulus))]

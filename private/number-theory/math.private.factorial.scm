@@ -15,10 +15,10 @@
   (define fact-table
     (list->vector
      (reverse
-      (foldl (lambda (n ns)
-               (cons (* n (car ns)) ns))
-             '(1)
-             (list-tabulate (- fact-table-size 1) add1)))))
+      (fold (lambda (n ns)
+              (cons (* n (car ns)) ns))
+            '(1)
+            (list-tabulate (- fact-table-size 1) add1)))))
 
   (define simple-cutoff 244)
 
