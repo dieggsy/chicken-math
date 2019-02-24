@@ -22,7 +22,8 @@
                                      math.private.partitions
                                      math.private.polygonal
                                      math.private.primitive-roots
-                                     math.private.quadratic))
+                                     math.private.quadratic
+                                     math.private.quadratic-residues))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -66,6 +67,11 @@
                                      math.private.quadratic))
   (extension math.private.primitive-roots
              (source "private/number-theory/math.private.primitive-roots.scm")
+             (component-dependencies math.private.divisibility
+                                     math.private.modular-arithmetic
+                                     math.private.number-theory))
+  (extension math.private.quadratic-residues
+             (source "private/number-theory/math.private.quadratic-residues.scm")
              (component-dependencies math.private.divisibility
                                      math.private.modular-arithmetic
                                      math.private.number-theory))

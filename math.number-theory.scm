@@ -17,4 +17,5 @@
   (reexport math.private.partitions)
   (reexport math.private.polygonal)
   (reexport math.private.primitive-roots)
-  (reexport math.private.quadratic))
+  (reexport math.private.quadratic)
+  (reexport math.private.quadratic-residues))
