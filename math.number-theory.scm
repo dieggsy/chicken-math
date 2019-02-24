@@ -2,18 +2,34 @@
 
   (import chicken.module)
 
-  (reexport math.private.divisibility)
-  (reexport math.private.modular-arithmetic)
-  (reexport math.private.number-theory)
-  (reexport math.private.factorial)
-  (reexport math.private.binomial)
-  (reexport math.private.bernoulli)
-  (reexport math.private.eulerian-number)
-  (reexport math.private.farey)
-  (reexport math.private.fibonacci)
-  (reexport math.private.partitions)
-  (reexport math.private.polygonal)
-  (reexport math.private.primitive-roots)
-  (reexport math.private.quadratic)
-  (reexport math.private.quadratic-residues)
-  (reexport math.private.tangent-number))
+  (import math.private.divisibility
+          math.private.modular-arithmetic
+          math.private.number-theory
+          math.private.factorial
+          math.private.binomial
+          math.private.bernoulli
+          math.private.eulerian-number
+          math.private.farey
+          math.private.fibonacci
+          math.private.partitions
+          math.private.polygonal
+          math.private.primitive-roots
+          math.private.quadratic
+          math.private.quadratic-residues
+          math.private.tangent-number)
+
+  (reexport math.private.divisibility
+            math.private.modular-arithmetic
+            math.private.number-theory
+            math.private.factorial
+            math.private.binomial
+            math.private.bernoulli
+            math.private.eulerian-number
+            math.private.farey
+            math.private.fibonacci
+            math.private.partitions
+            math.private.polygonal
+            math.private.primitive-roots
+            math.private.quadratic
+            math.private.quadratic-residues
+            math.private.tangent-number))
