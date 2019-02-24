@@ -23,7 +23,8 @@
                                      math.private.polygonal
                                      math.private.primitive-roots
                                      math.private.quadratic
-                                     math.private.quadratic-residues))
+                                     math.private.quadratic-residues
+                                     math.private.tangent-number))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -75,6 +76,8 @@
              (component-dependencies math.private.divisibility
                                      math.private.modular-arithmetic
                                      math.private.number-theory))
+  (extension math.private.tangent-number
+             (source "private/number-theory/math.private.tangent-number.scm"))
 
   ;; Vector
   (extension math.private.vector
