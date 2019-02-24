@@ -19,7 +19,10 @@
                                      math.private.eulerian-number
                                      math.private.farey
                                      math.private.fibonacci
-                                     math.private.partitions))
+                                     math.private.partitions
+                                     math.private.polygonal
+                                     math.private.primitive-roots
+                                     math.private.quadratic))
   (extension math.private.base-random
              (source "private/base/math.private.base-random.scm"))
 
@@ -61,6 +64,11 @@
              (source "private/number-theory/math.private.polygonal.scm")
              (component-dependencies math.private.number-theory
                                      math.private.quadratic))
+  (extension math.private.primitive-roots
+             (source "private/number-theory/math.private.primitive-roots.scm")
+             (component-dependencies math.private.divisibility
+                                     math.private.modular-arithmetic
+                                     math.private.number-theory))
 
   ;; Vector
   (extension math.private.vector

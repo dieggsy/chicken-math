@@ -14,4 +14,7 @@
   (reexport math.private.eulerian-number)
   (reexport math.private.farey)
   (reexport math.private.fibonacci)
-  (reexport math.private.partitions))
+  (reexport math.private.partitions)
+  (reexport math.private.polygonal)
+  (reexport math.private.primitive-roots)
+  (reexport math.private.quadratic))
