@@ -3,7 +3,7 @@
           chicken.base
           miscmacros)
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
 
   (define (binomial* n k)
     ;;  compute the binomial coeffecient n choose k

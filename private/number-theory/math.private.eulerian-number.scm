@@ -3,7 +3,8 @@
           chicken.base
           miscmacros)
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
+
   ;;   computes the Eulerian number <n,k>
   ;;   http://mathworld.wolfram.com/EulerianNumber.html
   (define (eulerian-number* n k)

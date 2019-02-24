@@ -5,7 +5,7 @@
           math.private.vector
           miscmacros)
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
 
   ;; Number of globally memoized Bernoulli numbers
   (define num-global-bs 200)

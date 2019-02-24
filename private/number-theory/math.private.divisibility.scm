@@ -6,13 +6,7 @@
           chicken.base
           chicken.type)
 
-  (define (andmap fn ls0)
-    (let mapf ((ls ls0))
-      (or
-       (null? ls)
-       (and
-        (fn (car ls))
-        (mapf (cdr ls))))))
+  (include-relative "../../utils.scm")
 
   (define (divides? a b)
     (if (zero? a) #f

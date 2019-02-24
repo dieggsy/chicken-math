@@ -5,7 +5,7 @@
           chicken.base
           srfi-1)
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
 
   (define (quadratic-solutions a b c)
     ;; return list of solutions to a a x^2 + b x + c = 0

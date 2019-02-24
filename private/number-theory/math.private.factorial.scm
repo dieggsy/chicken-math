@@ -8,7 +8,7 @@
           srfi-1
           (only miscmacros ensure))
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
 
   (define fact-table-size 171)
 

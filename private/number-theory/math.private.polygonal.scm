@@ -11,7 +11,7 @@
           miscmacros
           (only math.private.number-theory perfect-square))
 
-  (define natural? (conjoin (complement negative?) integer?))
+  (include-relative "../../utils.scm")
 
   (define (triangle-number n)
     (quotient (* n (+ n 1)) 2))
