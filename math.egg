@@ -5,6 +5,7 @@
  (component-options
   (csc-options "-O3"))
  (dependencies srfi-1 srfi-4 iset miscmacros)
+ (test-dependencies test srfi-1)
  (components
 
   ;; Number theory
