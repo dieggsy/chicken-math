@@ -1,9 +1,6 @@
-;; (include "private/number-theory/number")
 (module math.number-theory ()
 
-  (import scheme
-          chicken.base
-          chicken.module)
+  (import chicken.module)
 
   (reexport math.private.divisibility)
   (reexport math.private.modular-arithmetic)
