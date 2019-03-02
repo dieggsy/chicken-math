@@ -1,7 +1,7 @@
 (module math.private.eulerian-number (eulerian-number)
   (import scheme
-          chicken.base
-          miscmacros)
+          (only chicken.base include-relative error add1 sub1)
+          (only miscmacros ensure))
 
   (include-relative "../../utils.scm")
 

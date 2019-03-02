@@ -16,11 +16,10 @@
                                          mod>=
                                          )
   (import scheme
-          chicken.base
-          chicken.format
-          srfi-1
-          math.private.divisibility
-          miscmacros)
+          (only chicken.base include-relative case-lambda)
+          (only srfi-1 fold)
+          (only math.private.divisibility bezout coprime?)
+          (only miscmacros ensure))
 
   (include-relative "modular-arithmetic-base.scm")
 

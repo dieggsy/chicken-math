@@ -1,7 +1,7 @@
 (module math.private.partitions (partitions
                                  set-partitions-cache)
   (import scheme
-          chicken.base)
+          (only chicken.base when vector-copy! void))
 
 
   ;; The number of partitions of 4 is 5, since the number 4 can

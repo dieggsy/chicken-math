@@ -1,7 +1,7 @@
 (module math.private.binomial (binomial)
   (import scheme
-          chicken.base
-          miscmacros)
+          (only chicken.base include-relative error add1)
+          (only miscmacros ensure))
 
   (include-relative "../../utils.scm")
 

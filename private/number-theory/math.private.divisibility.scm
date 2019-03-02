@@ -3,8 +3,12 @@
                                    pairwise-coprime?
                                    bezout)
   (import scheme
-          chicken.base
-          chicken.type)
+          (only chicken.base
+                include-relative
+                error
+                quotient&remainder
+                let-values
+                exact-integer?))
 
   (include-relative "../../utils.scm")
 

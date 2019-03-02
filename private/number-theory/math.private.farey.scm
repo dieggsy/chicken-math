@@ -1,7 +1,7 @@
 (module math.private.farey (farey-sequence
                             mediant)
   (import scheme
-          chicken.base)
+          (only chicken.base error sub1))
 
   (define (mediant x y)
     (/ (+ (numerator x) (numerator y))

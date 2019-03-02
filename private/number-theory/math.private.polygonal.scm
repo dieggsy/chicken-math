@@ -6,9 +6,9 @@
                                 heptagonal-number heptagonal-number?
                                 octagonal-number octagonal-number?)
   (import scheme
-          chicken.base
-          math.private.quadratic
-          miscmacros
+          (only chicken.base include-relative)
+          (only math.private.quadratic quadratic-natural-solutions)
+          (only miscmacros ensure)
           (only math.private.number-theory perfect-square))
 
   (include-relative "../../utils.scm")

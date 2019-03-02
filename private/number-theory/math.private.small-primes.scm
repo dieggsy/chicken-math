@@ -2,9 +2,9 @@
                                    *SMALL-PRIME-LIMIT*)
 
   (import scheme
-          chicken.base
           chicken.type
           chicken.fixnum
+          (only chicken.base add1 unless void when fixnum?)
           (only iset
                 make-bit-vector
                 bit-vector-set!

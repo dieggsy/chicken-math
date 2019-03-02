@@ -1,4 +1,4 @@
-(import chicken.base)
+(import (only chicken.base conjoin complement exact-integer?))
 
 (define natural? (conjoin (complement negative?) exact-integer?))
 

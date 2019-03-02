@@ -3,11 +3,11 @@
                                          jacobi-symbol)
 
   (import scheme
-          chicken.base
-          srfi-1
-          math.private.divisibility
-          math.private.modular-arithmetic
-          math.private.number-theory)
+          (only chicken.base error include-relative unless)
+          (only srfi-1 first second)
+          (only math.private.divisibility divides?)
+          (only math.private.modular-arithmetic modular-expt)
+          (only math.private.number-theory factorize prime-divisors))
 
   (include-relative "../../utils.scm")
   ;; DEFINITION (Quadratic residue)

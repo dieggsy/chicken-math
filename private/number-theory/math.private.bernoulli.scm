@@ -1,9 +1,9 @@
 (module math.private.bernoulli (bernoulli-number)
   (import scheme
-          chicken.base
-          math.private.binomial
-          math.private.vector
-          miscmacros)
+          (only chicken.base include-relative error add1 let-values)
+          (only math.private.binomial binomial)
+          (only math.private.vector vector-ref!)
+          (only miscmacros ensure))
 
   (include-relative "../../utils.scm")
 

@@ -1,7 +1,7 @@
 (module math.private.tangent-number (tangent-number)
 
   (import scheme
-          chicken.base)
+          (only chicken.base error add1 sub1))
 
   ;;  The n'th tangent number:
   ;;  <http://mathworld.wolfram.com/TangentNumber.html>

@@ -3,7 +3,8 @@
                                 make-modular-fibonacci
                                 modular-fibonacci)
   (import scheme
-          chicken.base)
+          (only chicken.base error))
+
   (define (generator a b p q count)
     ;; SICP ex. 1.19
     (cond

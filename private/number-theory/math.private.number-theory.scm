@@ -38,13 +38,13 @@
 
   (import scheme
           chicken.base
-          chicken.bitwise
-          chicken.sort
-          srfi-1
-          math.private.small-primes
-          math.private.divisibility
-          math.private.modular-arithmetic
-          math.private.base-random
+          (only chicken.bitwise arithmetic-shift integer-length)
+          (only chicken.sort sort)
+          (only srfi-1 every first second)
+          (only math.private.small-primes small-prime? *SMALL-PRIME-LIMIT*)
+          (only math.private.divisibility divides?)
+          (only math.private.modular-arithmetic modular-expt modular-inverse)
+          (only math.private.base-random random-natural random-integer)
           (only miscmacros ensure)
           (only iset
                 make-bit-vector

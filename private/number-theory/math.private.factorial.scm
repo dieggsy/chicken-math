@@ -3,9 +3,9 @@
                                 multinomial)
 
   (import scheme
-          chicken.base
-          chicken.fixnum
-          srfi-1
+          (only chicken.base include-relative error add1 fixnum?)
+          (only chicken.fixnum fx*)
+          (only srfi-1 list-tabulate find fold)
           (only miscmacros ensure))
 
   (include-relative "../../utils.scm")

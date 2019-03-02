@@ -2,8 +2,8 @@
                                 quadratic-integer-solutions
                                 quadratic-natural-solutions)
   (import scheme
-          chicken.base
-          srfi-1)
+          (only chicken.base include-relative conjoin)
+          (only srfi-1 filter))
 
   (include-relative "../../utils.scm")
 

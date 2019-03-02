@@ -7,11 +7,15 @@
                                       primitive-roots)
 
   (import scheme
-          chicken.base
-          chicken.format
-          srfi-1
-          math.private.divisibility
-          math.private.modular-arithmetic
+          (only chicken.base include-relative error add1)
+          (only chicken.format format)
+          (only srfi-1 list-tabulate first filter)
+          (only math.private.divisibility coprime?)
+          (only math.private.modular-arithmetic
+                with-modulus
+                mod=
+                mod*
+                modexpt)
           (only math.private.number-theory
                 odd-prime-power?
                 totient

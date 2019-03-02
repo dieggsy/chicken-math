@@ -1,24 +1,5 @@
-;; (module modular-arithmetic-base (with-modulus
-;;                                  current-modulus
-;;                                  modular-inverse
-;;                                  modular-expt
-;;                                  inline-mod+
-;;                                  inline-mod*
-;;                                  inline-mod-
-;;                                  inline-mod/
-;;                                  inline-modsqr
-;;                                  inline-modexpt
-;;                                  inline-mod
-;;                                  inline-mod=
-;;                                  inline-mod<
-;;                                  inline-mod<=
-;;                                  inline-mod>
-;;                                  inline-mod>=)
-;;   (import scheme
-;;           chicken.base
-;;           divisibility
-;;           miscmacros))
-
+(import (only chicken.base error make-parameter sub1)
+        (only chicken.format format))
 (define current-modulus (make-parameter 1))
 
 (define (modular-inverse* n a)
