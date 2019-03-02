@@ -8,6 +8,14 @@
  (test-dependencies test srfi-1)
  (components
 
+  ;; Base
+  (extension math.private.base-random
+             (source "private/base/math.private.base-random.scm"))
+
+  ;; Flonum
+  (extension math.private.flonum-bits
+             (source "private/flonum/math.private.flonum-bits.scm"))
+
   ;; Number theory
   (extension math.number-theory
              (source "math.number-theory.scm")
@@ -26,8 +34,6 @@
                                      math.private.quadratic
                                      math.private.quadratic-residues
                                      math.private.tangent-number))
-  (extension math.private.base-random
-             (source "private/base/math.private.base-random.scm"))
 
   (extension math.private.small-primes
              (source "private/number-theory/math.private.small-primes.scm"))

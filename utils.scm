@@ -1,6 +1,6 @@
 (import chicken.base)
 
-(define natural? (conjoin (complement negative?) integer?))
+(define natural? (conjoin (complement negative?) exact-integer?))
 
 (define (andmap fn ls0)
   (let mapf ((ls ls0))
@@ -16,4 +16,4 @@
    (let ((rest (cons ls0 rest)))
      (or
       (apply func (map car rest))
-      (apply ormap func (map cdr rest)) ) ) ) )
+      (apply ormap func (map cdr rest))))))
