@@ -4,7 +4,7 @@
  (license "GPL-3.0")
  (component-options
   (csc-options "-O3"))
- (dependencies srfi-1 miscmacros)
+ (dependencies srfi-1 r6rs-bytevectors miscmacros)
  (test-dependencies test srfi-1)
  (components
 
