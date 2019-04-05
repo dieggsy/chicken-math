@@ -45,11 +45,7 @@
           (only math.private.divisibility divides?)
           (only math.private.modular-arithmetic modular-expt modular-inverse)
           (only math.private.base-random random-natural random-integer)
-          (only miscmacros ensure)
-          (only iset
-                make-bit-vector
-                bit-vector-set!
-                bit-vector-ref))
+          (only miscmacros ensure))
 
   (include-relative "../../utils.scm")
 
@@ -182,8 +178,8 @@
   (define prime?
     (let ()
       (define N *VERY-SMALL-PRIME-LIMIT*)
-      (define ps (make-bit-vector (+ N 1) #t))
-      (define ! bit-vector-set!)
+      (define ps (make-vector (+ N 1) #t))
+      (define ! vector-set!)
       (! ps 0 #f)
       (! ps 1 #f)
       (do ((n 2 (add1 n)))
@@ -194,7 +190,7 @@
       (lambda (n)
         (let ((n (abs n)))
           (cond ((<= n N)
-                 (bit-vector-ref ps n))
+                 (vector-ref ps n))
                 ((< n *SMALL-PRIME-LIMIT*)
                  (small-prime? n))
                 (else
