@@ -2,14 +2,13 @@
                                    *SMALL-PRIME-LIMIT*)
 
   (import scheme
+          (only chicken.base include-relative)
           chicken.type
           chicken.fixnum
           (only chicken.base add1 unless void when fixnum?)
-          (only iset
-                make-bit-vector
-                bit-vector-set!
-                bit-vector-ref)
           (only miscmacros ensure let/cc))
+
+  (include-relative "bit-vector-unsafe.scm")
 
   (: non-235 (list-of fixnum))
   (define non-235 '(1 7 11 13 17 19 23 29 31 37 41 43 47 49 53 59))
