@@ -15,6 +15,9 @@
   ;; Flonum
   (extension math.private.flonum-bits
              (source "private/flonum/math.private.flonum-bits.scm"))
+  (extension math.private.flonum-constants
+             (source "private/flonum/math.private.flonum-constants.scm")
+             (component-dependencies math.private.flonum-bits))
 
   ;; Number theory
   (extension math.number-theory
