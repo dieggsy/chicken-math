@@ -7,6 +7,7 @@
                                   fpulp)
   (import scheme
           chicken.flonum
+          chicken.type
           (only chicken.base
                 include
                 include-relative
@@ -17,17 +18,19 @@
                 sub1
                 unless)
           (only chicken.format format)
-          (only chicken.bitwise)
+          (only chicken.bitwise arithmetic-shift bitwise-ior)
           (only miscmacros ensure))
 
   (include "utils.scm")
   (include-relative "racket-shim.scm")
 
+  (: flonum->bit-field (float -> integer))
   (define (flonum->bit-field x)
     (ensure natural?
             (integer-bytes->integer
              (real->floating-point-bytes x 8) #f)))
 
+  (: bit-field->flonum (integer -> float))
   (define (bit-field->flonum i)
     (cond [(and (>= i 0) (<= i #xffffffffffffffff))
            (floating-point-bytes->real (integer->integer-bytes i 8 #f))]
@@ -41,6 +44,7 @@
   (define max-signed-exponent 1023)
   (define min-signed-exponent -1074)
 
+  (: flonum->fields (float -> fixnum fixnum integer))
   (define (flonum->fields x)
     (define n (flonum->bit-field x))
     (values (if (zero? (bitwise-bit-field n 63 64)) 0 1)
@@ -50,6 +54,7 @@
             (bitwise-bit-field n 0 52)))
 
 
+  (: fields->flonum (integer integer integer -> float))
   (define (fields->flonum s e m)
     (cond [(not (or (= s 0) (= s 1)))
            (error 'fields->flonum "bad argument value - not 0 or 1" s)]
@@ -62,6 +67,7 @@
                                            (arithmetic-shift e 52)
                                            m))]))
 
+  (: flonum->sig+exp (float -> integer fixnum))
   (define (flonum->sig+exp x)
     (define-values (s e m) (flonum->fields x))
     (let-values ([(sig exp)  (if (= e 0)
@@ -70,16 +76,19 @@
                                          (ensure fixnum? (- e 1075))))])
       (values (if (zero? s) sig (- sig)) exp)))
 
+  (: sig+exp->flonum (integer integer -> float))
   (define (sig+exp->flonum sig exp)
     (cond [(= sig 0)  0.0]
           [(> exp max-signed-exponent)  (if (< sig 0) -inf.0 +inf.0)]
           [(< exp min-signed-exponent)  (if (< sig 0) -0.0 0.0)]
           [else  (exact->inexact (* sig (expt 2 exp)))]))
 
+  (: flonum->ordinal (float -> integer))
   (define (flonum->ordinal x)
     (cond [(fp< x 0.0)  (- (flonum->bit-field (fp- 0.0 x)))]
           [else             (flonum->bit-field (fpabs x))])) ; abs for -0.0
 
+  (: ordinal->flonum (integer -> float))
   (define (ordinal->flonum i)
     (cond [(and (<= i #x7fffffffffffffff))
            (cond [(< i 0)  (fp- 0.0 (bit-field->flonum (- i)))]
@@ -90,6 +99,7 @@
   (define +inf-ordinal (flonum->ordinal +inf.0))
   (define -inf-ordinal (flonum->ordinal -inf.0))
 
+  (: fpstep (float integer -> float))
   (define (fpstep x n)
     (cond [(not (and (fp>= x -inf.0) (fp<= x +inf.0)))  +nan.0]
           [(and (fp= x +inf.0) (>= n 0))  +inf.0]
@@ -99,13 +109,17 @@
                          [(> i +inf-ordinal)  +inf.0]
                          [else  (ordinal->flonum i)]))]))
 
+  (: fpnext (float -> float))
   (define (fpnext x) (fpstep x 1))
 
+  (: fpprev (float -> float))
   (define (fpprev x) (fpstep x -1))
 
+  (: flonums-between (float float -> integer))
   (define (flonums-between x y)
     (- (flonum->ordinal y) (flonum->ordinal x)))
 
+  (: flulp (float -> float))
   (define (fpulp x)
     (let ([x  (fpabs x)])
       (cond [(fp= x +inf.0)  +nan.0]
