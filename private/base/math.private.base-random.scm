@@ -2,6 +2,7 @@
                                   random-natural
                                   random-integer)
   (import scheme
+          chicken.type
           chicken.base
           chicken.bitwise
           chicken.fixnum
@@ -11,6 +12,7 @@
   (define block-bits 30)
   (define block-size (arithmetic-shift 1 block-bits))
 
+  (: random-bits (integer -> integer))
   (define (random-bits bits)
     (cond [(<= bits 0) (error 'random-bits "bad argument type - not a positive integer" bits)]
           [else
@@ -29,6 +31,7 @@
 
   (define bias-bits (* 2 block-bits))
 
+  (: random-natural (integer -> integer))
   (define (random-natural n)
     (cond
      [(<= n 0)
@@ -46,7 +49,7 @@
           (define r (quotient (* (+ (random-bits bits) 1) n) m))
           (if (>= r n) (loop) r)))]))
 
+  (: random-integer (integer integer -> integer))
   (define (random-integer a b)
     (let ([a  (min a b)] [b  (max a b)])
-      (+ a (random-natural (- b a)))))
-  )
+      (+ a (random-natural (- b a))))))
