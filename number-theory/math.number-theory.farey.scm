@@ -1,4 +1,4 @@
-(module math.private.farey (farey-sequence
+(module math.number-theory.farey (farey-sequence
                             mediant)
   (import scheme
           (only chicken.base error sub1))

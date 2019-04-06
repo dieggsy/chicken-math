@@ -1,4 +1,4 @@
-(module math.private.number-theory (solve-chinese
+(module math.number-theory.base (solve-chinese
 
                                     ;; primes
                                     nth-prime
@@ -37,17 +37,25 @@
                                     mangoldt-lambda)
 
   (import scheme
-          chicken.base
+          (only chicken.base
+                include
+                add1
+                sub1
+                case-lambda
+                let-values
+                error
+                unless
+                when)
           (only chicken.bitwise arithmetic-shift integer-length)
           (only chicken.sort sort)
           (only srfi-1 every first second)
-          (only math.private.small-primes small-prime? *SMALL-PRIME-LIMIT*)
-          (only math.private.divisibility divides?)
-          (only math.private.modular-arithmetic modular-expt modular-inverse)
-          (only math.private.base-random random-natural random-integer)
+          (only math.number-theory.small-primes small-prime? *SMALL-PRIME-LIMIT*)
+          (only math.number-theory.divisibility divides?)
+          (only math.number-theory.modular-arithmetic modular-expt modular-inverse)
+          (only math.base.random random-natural random-integer)
           (only miscmacros ensure))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   ;;
   ;; Configuration

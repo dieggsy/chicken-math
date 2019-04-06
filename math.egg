@@ -9,87 +9,87 @@
  (components
 
   ;; Base
-  (extension math.private.base-random
-             (source "private/base/math.private.base-random.scm"))
+  (extension math.base.random
+             (source "base/math.base.random.scm"))
 
   ;; Flonum
-  (extension math.private.flonum-bits
-             (source "private/flonum/math.private.flonum-bits.scm"))
-  (extension math.private.flonum-constants
-             (source "private/flonum/math.private.flonum-constants.scm")
-             (component-dependencies math.private.flonum-bits))
+  (extension math.flonum.bits
+             (source "flonum/math.flonum.bits.scm"))
+  (extension math.flonum.constants
+             (source "flonum/math.flonum.constants.scm")
+             (component-dependencies math.flonum.bits))
 
   ;; Number theory
   (extension math.number-theory
-             (source "math.number-theory.scm")
-             (component-dependencies math.private.divisibility
-                                     math.private.modular-arithmetic
-                                     math.private.number-theory
-                                     math.private.factorial
-                                     math.private.binomial
-                                     math.private.bernoulli
-                                     math.private.eulerian-number
-                                     math.private.farey
-                                     math.private.fibonacci
-                                     math.private.partitions
-                                     math.private.polygonal
-                                     math.private.primitive-roots
-                                     math.private.quadratic
-                                     math.private.quadratic-residues
-                                     math.private.tangent-number))
+             (source "number-theory/math.number-theory.scm")
+             (component-dependencies math.number-theory.divisibility
+                                     math.number-theory.modular-arithmetic
+                                     math.number-theory.base
+                                     math.number-theory.factorial
+                                     math.number-theory.binomial
+                                     math.number-theory.bernoulli
+                                     math.number-theory.eulerian-number
+                                     math.number-theory.farey
+                                     math.number-theory.fibonacci
+                                     math.number-theory.partitions
+                                     math.number-theory.polygonal
+                                     math.number-theory.primitive-roots
+                                     math.number-theory.quadratic
+                                     math.number-theory.quadratic-residues
+                                     math.number-theory.tangent-number))
 
-  (extension math.private.small-primes
-             (source "private/number-theory/math.private.small-primes.scm"))
+  (extension math.number-theory.small-primes
+             (source "number-theory/math.number-theory.small-primes.scm"))
 
-  (extension math.private.divisibility
-             (source "private/number-theory/math.private.divisibility.scm"))
+  (extension math.number-theory.divisibility
+             (source "number-theory/math.number-theory.divisibility.scm"))
 
-  (extension math.private.modular-arithmetic
-             (source "private/number-theory/math.private.modular-arithmetic.scm")
-             (component-dependencies math.private.divisibility))
+  (extension math.number-theory.modular-arithmetic
+             (source "number-theory/math.number-theory.modular-arithmetic.scm")
+             (component-dependencies math.number-theory.divisibility))
 
-  (extension math.private.number-theory
-             (source "private/number-theory/math.private.number-theory.scm")
-             (component-dependencies math.private.modular-arithmetic
-                                     math.private.divisibility
-                                     math.private.small-primes
-                                     math.private.base-random))
-  (extension math.private.factorial
-             (source "private/number-theory/math.private.factorial.scm"))
-  (extension math.private.binomial
-             (source "private/number-theory/math.private.binomial.scm"))
-  (extension math.private.bernoulli
-             (source "private/number-theory/math.private.bernoulli.scm")
-             (component-dependencies math.private.binomial
-                                     math.private.vector))
-  (extension math.private.eulerian-number
-             (source "private/number-theory/math.private.eulerian-number.scm"))
-  (extension math.private.farey
-             (source "private/number-theory/math.private.farey.scm"))
-  (extension math.private.fibonacci
-             (source "private/number-theory/math.private.fibonacci.scm"))
-  (extension  math.private.partitions
-              (source "private/number-theory/math.private.partitions.scm"))
-  (extension math.private.quadratic
-             (source "private/number-theory/math.private.quadratic.scm"))
-  (extension math.private.polygonal
-             (source "private/number-theory/math.private.polygonal.scm")
-             (component-dependencies math.private.number-theory
-                                     math.private.quadratic))
-  (extension math.private.primitive-roots
-             (source "private/number-theory/math.private.primitive-roots.scm")
-             (component-dependencies math.private.divisibility
-                                     math.private.modular-arithmetic
-                                     math.private.number-theory))
-  (extension math.private.quadratic-residues
-             (source "private/number-theory/math.private.quadratic-residues.scm")
-             (component-dependencies math.private.divisibility
-                                     math.private.modular-arithmetic
-                                     math.private.number-theory))
-  (extension math.private.tangent-number
-             (source "private/number-theory/math.private.tangent-number.scm"))
+  (extension math.number-theory.base
+             (source "number-theory/math.number-theory.base.scm")
+             (component-dependencies math.number-theory.modular-arithmetic
+                                     math.number-theory.divisibility
+                                     math.number-theory.small-primes
+                                     math.base.random))
+  (extension math.number-theory.factorial
+             (source "number-theory/math.number-theory.factorial.scm"))
+  (extension math.number-theory.binomial
+             (source "number-theory/math.number-theory.binomial.scm"))
+  (extension math.number-theory.bernoulli
+             (source "number-theory/math.number-theory.bernoulli.scm")
+             (component-dependencies math.number-theory.binomial
+                                     math.vector.base))
+  (extension math.number-theory.eulerian-number
+             (source "number-theory/math.number-theory.eulerian-number.scm"))
+  (extension math.number-theory.farey
+             (source "number-theory/math.number-theory.farey.scm"))
+  (extension math.number-theory.fibonacci
+             (source "number-theory/math.number-theory.fibonacci.scm"))
+  (extension  math.number-theory.partitions
+              (source "number-theory/math.number-theory.partitions.scm"))
+  (extension math.number-theory.quadratic
+             (source "number-theory/math.number-theory.quadratic.scm"))
+  (extension math.number-theory.polygonal
+             (source "number-theory/math.number-theory.polygonal.scm")
+             (component-dependencies math.number-theory.base
+                                     math.number-theory.quadratic))
+  (extension math.number-theory.primitive-roots
+             (source "number-theory/math.number-theory.primitive-roots.scm")
+             (component-dependencies math.number-theory.divisibility
+                                     math.number-theory.modular-arithmetic
+                                     math.number-theory.base))
+  (extension math.number-theory.quadratic-residues
+             (source "number-theory/math.number-theory.quadratic-residues.scm")
+             (component-dependencies math.number-theory.divisibility
+                                     math.number-theory.modular-arithmetic
+                                     math.number-theory.base))
+  (extension math.number-theory.tangent-number
+             (source "number-theory/math.number-theory.tangent-number.scm"))
 
   ;; Vector
-  (extension math.private.vector
-             (source "private/vector/math.private.vector.scm"))
+  (extension math.vector.base
+             (source "vector/math.vector.base.scm"))
   ))

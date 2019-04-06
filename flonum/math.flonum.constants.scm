@@ -1,13 +1,13 @@
-(module math.private.flonum-constants (-max.0
-                                       -max-subnormal.0
-                                       -min.0
-                                       +min.0
-                                       +max-subnormal.0
-                                       +max.0
-                                       epsilon.0)
+(module math.flonum.constants (-max.0
+                               -max-subnormal.0
+                               -min.0
+                               +min.0
+                               +max-subnormal.0
+                               +max.0
+                               epsilon.0)
   (import scheme
           (only chicken.flonum maximum-flonum)
-          (only math.private.flonum-bits
+          (only math.flonum.bits
                 ordinal->flonum
                 fpnext
                 fpprev

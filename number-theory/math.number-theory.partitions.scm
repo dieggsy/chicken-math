@@ -1,4 +1,4 @@
-(module math.private.partitions (partitions
+(module math.number-theory.partitions (partitions
                                  set-partitions-cache)
   (import scheme
           (only chicken.base when vector-copy! void))

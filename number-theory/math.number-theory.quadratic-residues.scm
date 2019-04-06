@@ -1,15 +1,15 @@
-(module math.private.quadratic-residues (quadratic-character
+(module math.number-theory.quadratic-residues (quadratic-character
                                          quadratic-residue?
                                          jacobi-symbol)
 
   (import scheme
-          (only chicken.base error include-relative unless)
+          (only chicken.base error include unless)
           (only srfi-1 first second)
-          (only math.private.divisibility divides?)
-          (only math.private.modular-arithmetic modular-expt)
-          (only math.private.number-theory factorize prime-divisors))
+          (only math.number-theory.divisibility divides?)
+          (only math.number-theory.modular-arithmetic modular-expt)
+          (only math.number-theory.base factorize prime-divisors))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
   ;; DEFINITION (Quadratic residue)
   ;;   a in Un is a quadratic residue,
   ;;   if there exists an s such that a=s^2 (mod n)

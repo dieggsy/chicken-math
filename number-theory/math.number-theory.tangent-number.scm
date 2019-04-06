@@ -1,4 +1,4 @@
-(module math.private.tangent-number (tangent-number)
+(module math.number-theory.tangent-number (tangent-number)
 
   (import scheme
           (only chicken.base error add1 sub1))

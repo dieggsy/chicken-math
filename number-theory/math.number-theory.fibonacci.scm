@@ -1,4 +1,4 @@
-(module math.private.fibonacci (make-fibonacci
+(module math.number-theory.fibonacci (make-fibonacci
                                 fibonacci
                                 make-modular-fibonacci
                                 modular-fibonacci)

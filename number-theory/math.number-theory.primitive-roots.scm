@@ -1,4 +1,4 @@
-(module math.private.primitive-roots (unit-group
+(module math.number-theory.primitive-roots (unit-group
                                       unit-group-order
                                       unit-group-orders
                                       exists-primitive-root?
@@ -7,16 +7,16 @@
                                       primitive-roots)
 
   (import scheme
-          (only chicken.base include-relative error add1)
+          (only chicken.base include error add1)
           (only chicken.format format)
           (only srfi-1 list-tabulate first filter)
-          (only math.private.divisibility coprime?)
-          (only math.private.modular-arithmetic
+          (only math.number-theory.divisibility coprime?)
+          (only math.number-theory.modular-arithmetic
                 with-modulus
                 mod=
                 mod*
                 modexpt)
-          (only math.private.number-theory
+          (only math.number-theory.base
                 odd-prime-power?
                 totient
                 prime-divisors
@@ -24,7 +24,7 @@
                 odd-prime?
                 prime-power))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
   ;; DEFINITION (Order)
   ;;  If G is a finite group with identity element e,
   ;;  then the order of g in G is the least k>0 such that

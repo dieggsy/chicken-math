@@ -1,9 +1,9 @@
-(module math.private.eulerian-number (eulerian-number)
+(module math.number-theory.eulerian-number (eulerian-number)
   (import scheme
-          (only chicken.base include-relative error add1 sub1)
+          (only chicken.base include error add1 sub1)
           (only miscmacros ensure))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   ;;   computes the Eulerian number <n,k>
   ;;   http://mathworld.wolfram.com/EulerianNumber.html

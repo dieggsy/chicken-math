@@ -1,4 +1,4 @@
-(module math.private.vector (vector-ref!)
+(module math.vector.base (vector-ref!)
   (import scheme
           chicken.base
           chicken.fixnum)

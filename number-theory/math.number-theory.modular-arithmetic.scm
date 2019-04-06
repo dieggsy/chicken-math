@@ -1,4 +1,4 @@
-(module math.private.modular-arithmetic (with-modulus
+(module math.number-theory.modular-arithmetic (with-modulus
                                          current-modulus
                                          modular-inverse
                                          modular-expt
@@ -18,7 +18,7 @@
   (import scheme
           (only chicken.base include-relative case-lambda)
           (only srfi-1 fold)
-          (only math.private.divisibility bezout coprime?)
+          (only math.number-theory.divisibility bezout coprime?)
           (only miscmacros ensure))
 
   (include-relative "modular-arithmetic-base.scm")

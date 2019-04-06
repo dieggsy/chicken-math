@@ -1,10 +1,10 @@
-(module math.private.flonum-bits (flonum->bit-field
-                                  bit-field->flonum
-                                  flonum->fields fields->flonum
-                                  flonum->sig+exp sig+exp->flonum
-                                  flonum->ordinal ordinal->flonum
-                                  fpstep fpnext fpprev flonums-between
-                                  fpulp)
+(module math.flonum.bits (flonum->bit-field
+                          bit-field->flonum
+                          flonum->fields fields->flonum
+                          flonum->sig+exp sig+exp->flonum
+                          flonum->ordinal ordinal->flonum
+                          fpstep fpnext fpprev flonums-between
+                          fpulp)
   (import scheme
           chicken.flonum
           chicken.type

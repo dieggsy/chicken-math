@@ -1,16 +1,16 @@
-(module math.private.divisibility (divides?
-                                   coprime?
-                                   pairwise-coprime?
-                                   bezout)
+(module math.number-theory.divisibility (divides?
+                                         coprime?
+                                         pairwise-coprime?
+                                         bezout)
   (import scheme
           (only chicken.base
-                include-relative
+                include
                 error
                 quotient&remainder
                 let-values
                 exact-integer?))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   (define (divides? a b)
     (if (zero? a) #f

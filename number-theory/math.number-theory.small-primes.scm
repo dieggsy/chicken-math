@@ -1,5 +1,5 @@
-(module math.private.small-primes (small-prime?
-                                   *SMALL-PRIME-LIMIT*)
+(module math.number-theory.small-primes (small-prime?
+                                         *SMALL-PRIME-LIMIT*)
 
   (import scheme
           (only chicken.base include-relative)

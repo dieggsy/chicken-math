@@ -1,6 +1,6 @@
-(module math.private.base-random (random-bits
-                                  random-natural
-                                  random-integer)
+(module math.base.random (random-bits
+                          random-natural
+                          random-integer)
   (import scheme
           chicken.type
           chicken.base

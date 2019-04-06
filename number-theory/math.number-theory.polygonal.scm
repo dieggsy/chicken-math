@@ -1,4 +1,4 @@
-(module math.private.polygonal (triangle-number
+(module math.number-theory.polygonal (triangle-number
                                 triangle-number?
                                 square-number?
                                 pentagonal-number pentagonal-number?
@@ -6,12 +6,12 @@
                                 heptagonal-number heptagonal-number?
                                 octagonal-number octagonal-number?)
   (import scheme
-          (only chicken.base include-relative)
-          (only math.private.quadratic quadratic-natural-solutions)
+          (only chicken.base include)
+          (only math.number-theory.quadratic quadratic-natural-solutions)
           (only miscmacros ensure)
-          (only math.private.number-theory perfect-square))
+          (only math.number-theory.base perfect-square))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   (define (triangle-number n)
     (quotient (* n (+ n 1)) 2))

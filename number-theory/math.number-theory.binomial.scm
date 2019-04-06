@@ -1,9 +1,9 @@
-(module math.private.binomial (binomial)
+(module math.number-theory.binomial (binomial)
   (import scheme
-          (only chicken.base include-relative error add1)
+          (only chicken.base include error add1)
           (only miscmacros ensure))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   (define (binomial* n k)
     ;;  compute the binomial coeffecient n choose k

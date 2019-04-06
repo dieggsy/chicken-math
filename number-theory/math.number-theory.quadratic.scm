@@ -1,11 +1,11 @@
-(module math.private.quadratic (quadratic-solutions
+(module math.number-theory.quadratic (quadratic-solutions
                                 quadratic-integer-solutions
                                 quadratic-natural-solutions)
   (import scheme
-          (only chicken.base include-relative conjoin)
+          (only chicken.base include conjoin)
           (only srfi-1 filter))
 
-  (include-relative "../../utils.scm")
+  (include "utils.scm")
 
   (define (quadratic-solutions a b c)
     ;; return list of solutions to a a x^2 + b x + c = 0

@@ -15,11 +15,11 @@
     (test '()     (quadratic-natural-solutions 1 0 +4))
     (test '(0)    (quadratic-natural-solutions 1 0 0)))
 
-  (test-group "math.private.eulerian-number"
+  (test-group "math.number-theory.eulerian-number"
     (test '(1 26 66 26 1)
           (map (lambda (x) (eulerian-number 5 x)) '(0 1 2 3 4))))
 
-  (test-group "math.private.primitive-roots"
+  (test-group "math.number-theory.primitive-roots"
     (test '(1 3 7 9 11 13 17 19) (unit-group 20))  ; 19 !!!!
     (test 2 (unit-group-order 19 20))
     (test 4 (unit-group-order  3 20))
@@ -37,7 +37,7 @@
             [else (= (length (unit-group n)) (unit-group-order r n))]))
     (test-assert  (andmap find-and-check-root '(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 78125))))
 
-  (test-group "math.private.polygonal"
+  (test-group "math.number-theory.polygonal"
     (test '(0 1 3  6 10 15) (map triangle-number    '(0 1 2 3 4 5)))
     (test '(0 1 5 12 22 35) (map pentagonal-number  '(0 1 2 3 4 5)))
     (test '(0 1 6 15 28 45) (map hexagonal-number   '(0 1 2 3 4 5)))
@@ -50,11 +50,11 @@
     (test-assert   (andmap heptagonal-number?  '(0 1 7 18 34 55)))
     (test-assert   (andmap octagonal-number?   '(0 1 8 21 40 65))))
 
-  (test-group "math.private.farey"
+  (test-group "math.number-theory.farey"
     (test '(0 1/5 1/4 1/3 2/5 1/2 3/5 2/3 3/4 4/5 1) (farey-sequence 5))
     (test 2/3 (mediant 1/1 1/2)))
 
-  (test-group "math.private.fibonacci"
+  (test-group "math.number-theory.fibonacci"
     (test '(0 1 1 2 3 5 8 13) (list-tabulate 8 fibonacci))
     (test '(2 1 3 4 7 11 18 29) (list-tabulate 8 (make-fibonacci 2 1)))
     (do ((a -5 (add1 a)))
@@ -66,20 +66,20 @@
           (test-assert (equal? (list-tabulate 20 (lambda (n) ((make-modular-fibonacci a b) n mod)))
                                (list-tabulate 20 (lambda (n) (modulo ((make-fibonacci a b) n) mod)))))))))
 
-  (test-group "math.private.partitions"
+  (test-group "math.number-theory.partitions"
     (test '(1 1 2 3 5 7 11 15 22 30 42)
           (map partitions '(0 1 2 3 4 5 6 7 8 9 10))))
 
 
-  (test-group "math.private.bernoulli"
+  (test-group "math.number-theory.bernoulli"
     (test '(1 -1/2 1/6 0 -1/30 0 1/42 0 -1/30 0 5/66 0 -691/2730 0 7/6 0 -3617/510 0 43867/798)
           (map bernoulli-number '(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18))))
 
-  (test-group "math.private.tangent-number"
+  (test-group "math.number-theory.tangent-number"
     (test '(1 2 16 272 7936 353792 22368256) (map tangent-number '(1 3 5 7 9 11 13)))
     (test '(0 0 0 0 0 0) (map tangent-number '(0 2 4 6 8 10))))
 
-  (test-group "math.private.factorial"
+  (test-group "math.number-theory.factorial"
     (define fact-table-size 171)
     (define simple-cutoff 244)
 
@@ -99,7 +99,7 @@
     (test 1 (multinomial 0 '()))
     (test 0 (multinomial 4 '(1 1))))
 
-  (test-group "math.private.binomial"
+  (test-group "math.number-theory.binomial"
     (test 120 (binomial 10 3))
     (test 0 (binomial 10 11))
     (test 1 (binomial 10 0))
@@ -108,7 +108,7 @@
     (test 10 (binomial 10 9)))
 
 
-  (test-group "math.private.number-theory"
+  (test-group "math.number-theory.base"
     (test-assert  (divides? 2 12))
     (test-assert (not (divides? 2 13)))
     (test-assert  (divides? 2 0))
@@ -242,7 +242,7 @@
         (test-assert (check-integer-root a n))))
     )
 
-  (test-group "math.private.quadratic-residues"
+  (test-group "math.number-theory.quadratic-residues"
     (test -1 (quadratic-character  2 5))
     (test -1 (quadratic-character  3 5))
     (test 0  (quadratic-character  5 5))
