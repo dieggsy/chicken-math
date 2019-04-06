@@ -18,6 +18,9 @@
   (extension math.flonum.constants
              (source "flonum/math.flonum.constants.scm")
              (component-dependencies math.flonum.bits))
+  (extension math.flonum.functions
+             (source "flonum/math.flonum.functions.scm")
+             (component-dependencies math.flonum.constants))
 
   ;; Number theory
   (extension math.number-theory
