@@ -15,6 +15,10 @@
   ;; Flonum
   (extension math.flonum.bits
              (source "flonum/math.flonum.bits.scm"))
+  (extension math.flonum.brent-dekker
+             (source "flonum/math.flonum.brent-dekker.scm")
+             (component-dependencies math.flonum.constants
+                                     math.flonum.functions))
   (extension math.flonum.constants
              (source "flonum/math.flonum.constants.scm")
              (component-dependencies math.flonum.bits))
