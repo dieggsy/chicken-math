@@ -22,6 +22,9 @@
   (extension math.flonum.constants
              (source "flonum/math.flonum.constants.scm")
              (component-dependencies math.flonum.bits))
+  (extension math.flonum.error
+             (source "flonum/math.flonum.error.scm")
+             (component-dependencies math.flonum.functions))
   (extension math.flonum.functions
              (source "flonum/math.flonum.functions.scm")
              (component-dependencies math.flonum.constants))
