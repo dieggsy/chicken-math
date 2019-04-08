@@ -16,30 +16,33 @@
                                          mod>=
                                          )
   (import scheme
+          chicken.type
           (only chicken.base include-relative case-lambda)
           (only srfi-1 fold)
           (only math.number-theory.divisibility bezout coprime?)
-          (only miscmacros ensure))
+          (only miscmacros ensure define-syntax-rule))
 
   (include-relative "modular-arithmetic-base.scm")
 
-  (define-syntax define-comparison-op
-    (syntax-rules ()
-      ((_ name op)
-       (define name
-         (case-lambda
-           [(a)  #t]
-           [(a b)
-            (define n (current-modulus))
-            (op (modulo a n) (modulo b n))]
-           [(a b . cs)
-            (define n (current-modulus))
-            (let ([a  (modulo a n)] [b  (modulo b n)])
-              (and (op a b)
-                   (let loop ([b b] [cs cs])
-                     (or (null? cs)
-                         (let ([c  (modulo (car cs) n)])
-                           (and (op b c) (loop c (cdr cs))))))))])))))
+  (define-syntax-rule (define-comparison-op name op)
+    (begin
+      (: name (integer #!rest integer -> boolean))
+      (define name
+        (case-lambda
+          [(a)  #t]
+          [(a b)
+           (define n (current-modulus))
+           (op (modulo a n) (modulo b n))]
+          [(a b . cs)
+           (define n (current-modulus))
+           (let ([a  (modulo a n)] [b  (modulo b n)])
+             (and (op a b)
+                  (let loop ([b b] [cs cs])
+                    (or (null? cs)
+                        (let ([c  (modulo (car cs) n)])
+                          (and (op b c) (loop c (cdr cs))))))))]))))
+
+  (: mod+ (#!rest integer -> integer))
   (define mod+
     (case-lambda
       [()  0]
@@ -51,6 +54,7 @@
              (modulo (+ a b) n)
              cs)]))
 
+  (: mod- (integer #!rest integer -> integer))
   (define mod-
     (case-lambda
       [(a)  (modulo (- a) (current-modulus))]
@@ -61,6 +65,7 @@
              (modulo (- a b) n)
              cs)]))
 
+  (: mod* (#!rest integer -> integer))
   (define mod*
     (case-lambda
       [() (modulo 1 (current-modulus))]
@@ -71,6 +76,8 @@
        (fold (lambda (x y) (modulo (* x y) n))
              (modulo (* a b) n)
              cs)]))
+
+  (: mod/ (integer #!rest integer -> integer))
   (define mod/
     (case-lambda
       [(a)  (modular-inverse a (current-modulus))]
@@ -81,13 +88,16 @@
        ;; It's ridiculous that `cs' has to be split here
        (mod/ a (apply mod* b (car cs) (cdr cs)))]))
 
+  (: modsqr (integer -> integer))
   (define (modsqr a) (modulo (* a a) (current-modulus)))
 
+  (: modexpt (integer integer -> integer))
   (define (modexpt a b)
     (define n (current-modulus))
     (cond [(< b 0)  (modular-expt (modular-inverse a n) (- b) n)]
           [else  (modular-expt a b n)]))
 
+  (: mod (number -> integer))
   (define (mod a)
     (cond [(integer? a)  (modulo a (current-modulus))]
           [else  (mod/ (numerator a) (denominator a))]))

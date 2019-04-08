@@ -1,10 +1,12 @@
 (module math.number-theory.binomial (binomial)
   (import scheme
+          chicken.type
           (only chicken.base include error add1)
           (only miscmacros ensure))
 
   (include "utils.scm")
 
+  (: binomial* (integer integer -> integer))
   (define (binomial* n k)
     ;;  compute the binomial coeffecient n choose k
     ;; https://gmplib.org/manual/Binomial-Coefficients-Algorithm.html
@@ -24,6 +26,7 @@
                        prod
                        (loop1 (* prod (/ (+ n (- k) i) i)) (add1 i)))))]))))
 
+  (: binomial (integer integer -> integer))
   (define (binomial n k)
     (cond [(< n 0) (error 'binomial "bad argument type - not a nonnegative integer" n)]
           [(< k 0) (error 'binomial "bad argument type - not a nonnegative integer" k)]

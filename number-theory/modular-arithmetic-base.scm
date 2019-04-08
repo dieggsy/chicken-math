@@ -2,11 +2,13 @@
         (only chicken.format format))
 (define current-modulus (make-parameter 1))
 
+(: modular-inverse* (integer integer -> integer))
 (define (modular-inverse* n a)
   (cond ((zero? a) (error 'modular-inverse "bad argument type - not a nonzero integer" a))
         ((coprime? n a) (modulo (car (bezout a n)) n))
         (else (error 'modular-inverse (format "bad argument typea - not coprime to modulus ~A: ~A" n a)))))
 
+(: modular-expt* (integer integer integer -> integer))
 (define (modular-expt* n a b)
   (cond [(< b 0)  (error 'modular-expt "bad argument type - not a nonnegative integer" b)]
         [else
@@ -17,14 +19,17 @@
                     (modulo (* c c) n))]
                  [else  (modulo (* a (loop a (sub1 b))) n)]))]))
 
+(: modular-const* (integer number -> integer))
 (define (modular-const* n a)
   (cond [(integer? a)  (modulo a n)]
         [else  (modulo (* (numerator a) (modular-inverse* n (denominator a))) n)]))
 
+(: modular-inverse (integer integer -> integer))
 (define (modular-inverse a n)
   (cond ((<= n 0) (error 'modular-inverse "bad argument type - not a positive integer: ~A" n))
         (else (modular-inverse* n a))))
 
+(: modular-expt (integer integer integer -> integer))
 (define (modular-expt a b n)
   (cond ((<= n 0) (error 'modular-expt "bad orgument type - not a positive integer: ~A" n))
         (else (modular-expt* n a b))))

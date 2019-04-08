@@ -1,8 +1,10 @@
 (module math.number-theory.tangent-number (tangent-number)
 
   (import scheme
+          chicken.type
           (only chicken.base error add1 sub1))
 
+  (: tangent-number (integer -> integer))
   ;;  The n'th tangent number:
   ;;  <http://mathworld.wolfram.com/TangentNumber.html>
   (define (tangent-number n)

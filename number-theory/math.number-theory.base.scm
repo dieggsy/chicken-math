@@ -37,6 +37,7 @@
                                     mangoldt-lambda)
 
   (import scheme
+          chicken.type
           (only chicken.base
                 include
                 add1
@@ -74,6 +75,7 @@
   ;; Powers
   ;;
 
+  (: max-dividing-power (integer integer -> integer))
   ;; (max-dividing-power p n) = m  <=> p^m | n  and  p^(m+1) doesn't divide n
   ;;   In Mathematica this one is called IntegerExponent
   (define (max-dividing-power p n)
@@ -96,6 +98,7 @@
           [else (ensure natural?
                         (find-start p 1))]))
 
+  (: max-dividing-power-naive (integer integer -> integer))
   (define (max-dividing-power-naive p n)
     ;; sames as max-dividing-power but using naive algorithm
     (define (loop p-to-e e)
@@ -114,6 +117,7 @@
   ;;   has a single solution in {0,...,n-1}, where n=n1*...nk.
 
   ;; Example : (solve-chinese '(2 3 2) '(3 5 7)) = 23
+  (: solve-chinese ((list-of integer) (list-of integer) -> integer))
   (define (solve-chinese as ns)
     (unless (andmap positive? ns)
       (error 'solve-chinese "bad argument type - not a list of positive integers" ns))
@@ -127,6 +131,7 @@
   ;;
   ;; PRIMES
   ;;
+  (: odd-prime? (integer -> boolean))
   (define (odd-prime? n)
     (and (odd? n) (prime? n)))
 
@@ -138,6 +143,8 @@
   ;;   'composite            (with at least probability 1/2)  if n is a composite non-Carmichael number
   ;;   a proper divisor of n (with at least probability 1/2)  if n is a Carmichael number
   ;; [MCA, p.509 - Algorithm 18.5]
+
+  (: prime-strong-pseudo-single? (integer -> (or symbol integer)))
   (define (prime-strong-pseudo-single? n)
     (cond
      [(<= n 0) (error 'prime-strong-pseudo-single? "bad argument type - not a positive integer" n)]
@@ -170,6 +177,7 @@
      [(= n 1)  'composite]
      [else  'probably-prime]))
 
+  (: prime-strong-pseudo/explanation (integer -> (or symbol integer)))
   (define (prime-strong-pseudo/explanation n)
     ;; run the strong test several times to improve probability
     (define (loop trials result)
@@ -178,11 +186,14 @@
             [else                         result]))
     (loop prime-strong-pseudo-trials (prime-strong-pseudo-single? n)))
 
+  (: prime-strong-pseudo? (integer -> boolean))
   (define (prime-strong-pseudo? n)
     (let ([explanation (prime-strong-pseudo/explanation n)])
       (or (eq? explanation 'very-probably-prime)
           (eq? explanation #t))))
 
+
+  (: prime? (integer -> boolean))
   (define prime?
     (let ()
       (define N *VERY-SMALL-PRIME-LIMIT*)
@@ -204,6 +215,8 @@
                 (else
                  (prime-strong-pseudo? n)))))))
 
+
+  (: next-prime (integer -> integer))
   (define (next-prime n)
     (cond
      [(negative? n) (- (prev-prime (abs n)))]
@@ -221,6 +234,7 @@
             n+2
             (next-prime n+2)))]))
 
+  (: prev-prime (integer -> integer))
   (define (prev-prime n)
     (cond
      [(negative? n) (- (next-prime (abs n)))]
@@ -236,6 +250,7 @@
                  n-2
                  (prev-prime n-2)))]))
 
+  (: next-primes (integer integer -> (list-of integer)))
   (define (next-primes m primes-wanted)
     (cond
      [(< primes-wanted 0)
@@ -250,6 +265,7 @@
                   (cons next (loop next (sub1 primes-wanted)))
                   '()))))]))
 
+  (: prev-primes (integer integer -> (list-of integer)))
   (define (prev-primes m primes-wanted)
     (cond
      [(< primes-wanted 0) (error 'next-primes "bad argument type - not a nonnegative integer" primes-wanted)]
@@ -263,6 +279,7 @@
                   (cons prev (loop prev (sub1 primes-wanted)))
                   '()))))]))
 
+  (: nth-prime (integer -> integer))
   (define (nth-prime n)
     (cond [(< n 0) (error 'next-primes "bad argument type - not a nonnegative integer" n)]
           [else
@@ -272,6 +289,7 @@
                  p
                  (loop (add1 m) (next-prime p))))]))
 
+  (: random-prime (integer -> integer))
   (define (random-prime n)
     (when (<= n 2)
       (error 'random-prime "bad argument type - not a positive integer greater than 2" n))
@@ -284,11 +302,13 @@
   ;; FACTORIZATION
   ;;
 
+  (: factorize (integer -> (list-of (list integer integer))))
   (define (factorize n)
     (if (< n *SMALL-FACTORIZATION-LIMIT*)  ; NOTE: Do measurement of best cut
         (factorize-small n)
         (factorize-large n)))
 
+  (: defactorize ((list-of (list integer integer)) -> integer))
   (define (defactorize bes)
     (cond [(null? bes) 1]
           [else
@@ -296,10 +316,12 @@
              (* (expt (first be) (second be))
                 (defactorize (cdr bes))))]))
 
+  (: factorize-small (integer -> (list-of (list integer integer))))
   (define (factorize-small n)
     ;; fast for small n, but works correctly for large n too
     (small-prime-factors-over n 2))
 
+  (: small-prime-factors-over (integer integer -> (list-of (list integer integer))))
   ;; Factor a number n without prime factors below the prime p.
   (define (small-prime-factors-over n p) ; p prime
     (cond [(<= p 0)
@@ -319,6 +341,7 @@
   ;;; ALGORITHM 19.8  Pollard's rho method
   ;; INPUT   n>=3 neither a prime nor a perfect power
   ;; OUTPUT  Either a proper divisor of n or #f
+  (: pollard (integer -> (or integer false)))
   (define (pollard n)
     (let ([x0 (random-natural n)])
       (do ([xi x0 (remainder (+ (* xi xi) 1) n)]
@@ -330,6 +353,7 @@
                g
                #f)])))
 
+  (: pollard-factorize (integer -> (list-of (list integer integer))))
   (define (pollard-factorize n)
     (if (< n *SMALL-FACTORIZATION-LIMIT*)
         (factorize-small n)
@@ -353,16 +377,20 @@
                         (pollard-factorize (quotient n divisor)))
                 (loop (pollard n))))])))
 
+  (: factorize-large (integer -> (list-of (list integer integer))))
   (define (factorize-large n)
     (combine-same-base
      (sort (pollard-factorize n) base-and-exponent<?)))
 
+
+  (: base-and-exponent<? ((or integer (list integer integer)) (or integer (list integer integer)) -> boolean))
   (define (base-and-exponent<? x y)
     (let ([id-or-first
            (lambda (x)
              (if (number? x) x (first x)))])
       (<= (id-or-first x) (id-or-first y))))
 
+  (: combine-same-base ((list-of (list integer integer)) -> (list-of (list integer integer))))
   (define (combine-same-base list-of-base-and-exponents)
     ;; list-of-base-and-exponents must be sorted
     (let ([l list-of-base-and-exponents])
@@ -393,10 +421,12 @@
   ;; Powers
   ;;
   ;;   Write a>0 as b^r with r maximal. Return b and r.
+  (: as-power (integer -> integer integer))
   (define (as-power a)
     (let ([r (apply gcd (map second (factorize a)))])
       (values (integer-root a r) r)))
 
+  (: prime-power (integer -> (or (list integer integer) false)))
   ;;   if n is a prime power, return list of prime and exponent in question,
   ;;   otherwise return #f
   (define (prime-power n)
@@ -405,20 +435,24 @@
           (first (prime-divisors/exponents n))
           #f)))
 
+  (: prime-power? (integer -> boolean))
   ;;   Is n of the form p^m, with p is prime?
   (define (prime-power? n)
     (and (prime-power n) #t))
 
+  (: odd-prime-power? (integer -> boolean))
   (define (odd-prime-power? n)
     (let ([p/e (prime-power n)])
       (and p/e
            (odd? (first p/e)))))
 
+(: perfect-power? (integer -> boolean))
   (define (perfect-power? a)
     (and (not (zero? a))
          (let-values ([(base n) (as-power a)])
            (and (> n 1) (> a 1)))))
 
+  (: simple-perfect-power (integer -> (or (list integer integer) false)))
   (define (simple-perfect-power a)
     ;; simple-perfect-power is used by pollard-fatorize
     (and (not (zero? a))
@@ -427,6 +461,7 @@
                (list base n)
                #f))))
 
+  (: perfect-power (integer -> (or (list integer integer) false)))
   ;;   if a = b^n with b>1 and n>1
   (define (perfect-power a)
     (and (not (zero? a))
@@ -438,12 +473,14 @@
   (define (integer-sqrt n)
     (inexact->exact (floor (sqrt n))))
 
+  (: perfect-square (integer -> (or integer false)))
   (define (perfect-square n)
     (let ([sqrt-n (integer-sqrt n)])
       (if (= (* sqrt-n sqrt-n) n)
           sqrt-n
           #f)))
 
+  (: powers-of (integer integer -> (list-of integer)))
   ;;   returns a list of numbers: a^0, ..., a^n
   (define (powers-of a n)
     (let loop ([i 0]
@@ -454,22 +491,27 @@
 
   (define prime-divisors/exponents factorize)
 
+  (: prime-divisors (integer -> (list-of integer)))
   ;;   return list of primes in a factorization of n
   (define (prime-divisors n)
     (map car (prime-divisors/exponents n)))
 
+  (: prime-exponents (integer -> (list-of integer)))
   ;;   return list of exponents in a factorization of n
   (define (prime-exponents n)
     (map cadr (prime-divisors/exponents n)))
 
+  (: prime-omega (integer -> integer))
   ;; http://reference.wolfram.com/mathematica/ref/PrimeOmega.html
   (define (prime-omega n)
     (apply +  (prime-exponents n)))
 
+  (: integer-root/remainder (integer integer -> integer integer))
   (define (integer-root/remainder a n)
     (let ([i (integer-root a n)])
       (values i (ensure natural? (- a (expt i n))))))
 
+  (: integer-root (integer integer -> integer))
   (define (integer-root x y)
     ;; y'th root of x
     (cond
@@ -516,6 +558,7 @@
                                        (loop (- g 1))))]))))))])))]))
 
 
+  (: simple-as-power (integer -> integer integer))
   ;;    For a>0 write it as a = b^r where r maximal
   ;;    return (values b r)
   (define (simple-as-power a)
@@ -533,12 +576,14 @@
   ;; DIVISORS
   ;;
 
+  (: divisors (integer -> (list-of integer)))
   ;;   return the positive divisors of n
   (define (divisors n)
     (cond [(zero? n) '()]
           [else (let ((n+ (if (positive? n) n (- n))))
                   (sort (factorization->divisors (factorize n+)) <))]))
 
+  (: factorization->divisors ((list-of (list integer integer)) -> (list-of integer)))
   (define (factorization->divisors f)
     (cond
      [(null? f) '(1)]
@@ -571,6 +616,7 @@
   ;;                   k          1
   ;;   phi(n) = n * product (1 - ---- )
   ;;                  i=1         pi
+  (: totient (integer -> integer))
   (define (totient n)
     (let ((ps (prime-divisors n)))
       (ensure natural?
@@ -581,6 +627,7 @@
   ;;   mu(n) =  1  if n is a product of an even number of primes
   ;;         = -1  if n is a product of an odd number of primes
   ;;         =  0  if n has a multiple prime factor
+  (: moebius-mu (integer -> integer))
   (define (moebius-mu n)
     (define (one? x) (= x 1))
     (define f (factorize n))
@@ -593,6 +640,7 @@
      [else 0]))
 
 
+  (: divisor-sum (integer #!optional integer -> integer))
   (define divisor-sum
     ;; returns the sum of the kth power of all divisors of n
     (let ()
@@ -623,6 +671,7 @@
                                [else divisor-sumk])
                          ps es)))])))
 
+  (: mangoldt-lambda (integer -> number))
   (define (mangoldt-lambda n)
     (cond
      [(<= n 0) (error 'mangoldt-lambda "bad argument type - not a positive integer" n)]

@@ -7,6 +7,7 @@
                                       primitive-roots)
 
   (import scheme
+          chicken.type
           (only chicken.base include error add1)
           (only chicken.format format)
           (only srfi-1 list-tabulate first filter)
@@ -34,11 +35,13 @@
   ;;  The group of units in Zn with respect to multiplication
   ;;  modulo n is called Un.
 
+  (: unit-group (integer -> (list-of integer)))
   (define (unit-group n)
     (cond [(<= n 0) (error 'unit-group "bad argument type - not a positive integer" n)]
           [else  (filter (lambda (m) (coprime? m n))
                          (list-tabulate (- n 1) add1))]))
 
+  (: unit-group-order (integer integer -> integer))
   (define (unit-group-order g n)
     (cond [(<= g 0) (error 'unit-group-order "bad argument type - not a positive integer" g)]
           [(<= n 0) (error 'unit-group-order "bad argument type - not a positive integer" n)]
@@ -51,6 +54,7 @@
                            (cond [(mod= a 1)  k]
                                  [else  (loop (+ k 1) (mod* a g))])))]))
 
+  (: unit-group-orders (integer -> (list-of integer)))
   (define (unit-group-orders n)
     (cond [(<= n 0) (error 'unit-group-orders "bad argument type - not a positive integer" n)]
           [else  (map (lambda (m) (unit-group-order m n))
@@ -70,6 +74,7 @@
   ;;      Un is cyclic   (i.e. have a primitive root)
   ;;  <=> n = 1, 2, 4, p^e, 2*p^e  where p is an odd prime
 
+  (: exists-primitive-root? (integer -> boolean))
   (define (exists-primitive-root? n)
     (cond [(<= n 0) (error 'exists-primitive-root? "bad argument type - not a positive integer" n)]
           [(or (= n 1) (= n 2) (= n 4))  #t]
@@ -81,6 +86,7 @@
   ;;  <=>   phi(n)/q
   ;;       a         <> 1  in Un for all primes q dividing phi(n)
 
+  (: primitive-root? (integer integer -> boolean))
   (define (primitive-root? g n)
     (cond [(<= g 0)  (error 'primitive-root? "bad argument type - not a positive integer" g)]
           [(<= n 0)  (error 'primitive-root? "bad argument type - not a positive integer" n)]
@@ -118,6 +124,7 @@
 
   ;; primitive-roots : integer -> list
   ;;  return list of all primitive roots of Un
+  (: primitive-roots (integer -> (list-of integer)))
   (define (primitive-roots n)
     (cond [(<= n 0)  (error 'primitive-roots "bad argument type - not a positive integer" n)]
           [(not (exists-primitive-root? n))  '()]
@@ -138,6 +145,7 @@
                 [(primitive-root? g)    (loop (+ g 1) (cons g roots))]
                 [else                   (loop (+ g 1)  roots)])))]))
 
+  (: primitive-root (integer -> (or integer false)))
   (define (primitive-root n)
     (cond [(<= n 0)  (error 'primitive-root "bad argument type - not a positive integer" n)]
           [(not (exists-primitive-root? n))  #f]

@@ -1,10 +1,12 @@
 (module math.number-theory.eulerian-number (eulerian-number)
   (import scheme
+          chicken.type
           (only chicken.base include error add1 sub1)
           (only miscmacros ensure))
 
   (include "utils.scm")
 
+  (: eulerian-number* (integer integer -> integer))
   ;;   computes the Eulerian number <n,k>
   ;;   http://mathworld.wolfram.com/EulerianNumber.html
   (define (eulerian-number* n k)
@@ -23,6 +25,7 @@
                                      (* (- i j) (vector-ref E (- j 1)))))))
              (ensure natural? (vector-ref E k)))]))
 
+  (: eulerian-number (integer integer -> integer))
   (define (eulerian-number n k)
     (cond [(< n 0) (error 'eulerian-number "bad argument type - not a nonnegative integer" n)]
           [(< k 0) (error 'eulerian-number "bad argument type - not a nonnegative integer" k)]
