@@ -1,5 +1,6 @@
 (module math.flonum.brent-dekker (fpbracketed-root)
   (import scheme
+          chicken.type
           (only chicken.base let*-values when)
           (only chicken.format printf)
           (only miscmacros define-syntax-rule)
@@ -11,6 +12,7 @@
   (define-syntax-rule (debugf e ...)
     (when debug-printf? (printf e ...)))
 
+  (: fpbracketed-root* ((float -> float) float float float float -> float))
   (define (fpbracketed-root* f a fa b fb)
     (let loop ([bisected? #t] [a a] [fa fa] [b b] [fb fb] [c a] [fc fa] [d 0.0] [n 0])
       (debugf "~a: ~a ~a~n" n a b)
@@ -79,6 +81,7 @@
           (loop bisected? a fa b fb c fc d (+ n 1)))]
        [else  b])))
 
+  (: flbracketed-root ((float -> float) float float -> float))
   ;; Find a root between a and b if f(a) and f(b) have opposite signs
   (define (fpbracketed-root f a b)
     (define fa (f a))
