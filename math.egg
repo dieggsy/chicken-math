@@ -25,9 +25,16 @@
   (extension math.flonum.error
              (source "flonum/math.flonum.error.scm")
              (component-dependencies math.flonum.functions))
+  (extension math.flonum.exp
+             (source "flonum/math.flonum.exp.scm")
+             (component-dependencies math.flonum.functions
+                                     math.flonum.constants
+                                     math.flonum.polyfun))
   (extension math.flonum.functions
              (source "flonum/math.flonum.functions.scm")
              (component-dependencies math.flonum.constants))
+  (extension math.flonum.polyfun
+             (source "flonum/math.flonum.polyfun.scm"))
 
   ;; Number theory
   (extension math.number-theory
