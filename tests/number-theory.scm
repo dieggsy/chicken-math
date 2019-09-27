@@ -4,16 +4,19 @@
 
   (import math.number-theory)
 
-  (test-group "math.private.qudratic"
-    (test '(-2 2) (quadratic-solutions 1 0 -4))
-    (test '()     (quadratic-solutions 1 0 +4))
-    (test '(0)    (quadratic-solutions 1 0 0))
-    (test '(-2 2) (quadratic-integer-solutions 1 0 -4))
-    (test '()     (quadratic-integer-solutions 1 0 +4))
-    (test '(0)    (quadratic-integer-solutions 1 0 0))
-    (test '(2)    (quadratic-natural-solutions 1 0 -4))
-    (test '()     (quadratic-natural-solutions 1 0 +4))
-    (test '(0)    (quadratic-natural-solutions 1 0 0)))
+  (test-group "math.private.quadratic"
+    (test '(-2 2)      (complex-quadratic-solutions 1 0 -4))
+    (test '(0-2i 0+2i) (complex-quadratic-solutions 1 0 +4))
+    (test '(0)         (complex-quadratic-solutions 1 0 0))
+    (test '(-2 2)      (quadratic-solutions 1 0 -4))
+    (test '()          (quadratic-solutions 1 0 +4))
+    (test '(0)         (quadratic-solutions 1 0 0))
+    (test '(-2 2)      (quadratic-integer-solutions 1 0 -4))
+    (test '()          (quadratic-integer-solutions 1 0 +4))
+    (test '(0)         (quadratic-integer-solutions 1 0 0))
+    (test '(2)         (quadratic-natural-solutions 1 0 -4))
+    (test '()          (quadratic-natural-solutions 1 0 +4))
+    (test '(0)         (quadratic-natural-solutions 1 0 0)))
 
   (test-group "math.number-theory.eulerian-number"
     (test '(1 26 66 26 1)
