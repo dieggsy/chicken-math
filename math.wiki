@@ -1,0 +1,12 @@
+== math
+
+[[toc:]]
+
+=== Introduction
+math is a chicken port of racket's {{racket/math}}.
+
+'''Disclaimer''': This is still largely under development, with the exception
+of the {{math.number-theory}} module, which is finished and ready for use.
+
+=== API
+See source documentation at: [[https://docs.racket-lang.org/math/index.html]]
