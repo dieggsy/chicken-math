@@ -8,3 +8,4 @@
 (include-relative "number-theory.scm")
 
 (test-end "math")
+(test-exit)

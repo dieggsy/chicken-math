@@ -9,9 +9,10 @@
 
   (include "utils.scm")
 
-  (: quadratic-complex-solutions  (cplxnum cplxnum cplxnum -> (list-of cplxnum)))
+  (: complex-quadratic-solutions  (cplxnum cplxnum cplxnum -> (list-of cplxnum)))
   (define (complex-quadratic-solutions a b c)
-    ;; return list of solutions to a a x^2 + b x + c = 0
+    ;; Return list of solutions to a a x^2 + b x + c = 0
+    ;; where a,b and c are complex numbers.
     (let* ([d         (- (* b b) (* 4 a c))]
            [sqrt-d    (sqrt d)]
            [-b-sqrt-d (- (- b) sqrt-d)]

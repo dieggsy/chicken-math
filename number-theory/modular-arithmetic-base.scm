@@ -102,7 +102,7 @@
 
 ;; (define-syntax modular/
 ;;   (syntax-rules ()
-;;     [(_ n a) (modular-inverse n a)]
+;;     [(_ n a) (modular-inverse a n)]
 ;;     [(_ n a b ...) (modular* n a (modular-inverse* n (modular* n b ...)))]))
 
 ;; (define-syntax-rule (modular-sqr n a) (modulo (* a a) n))
