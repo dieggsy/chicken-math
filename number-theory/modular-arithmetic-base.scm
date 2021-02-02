@@ -1,6 +1,14 @@
 (import (only chicken.base error make-parameter sub1)
         (only chicken.format format))
-(define current-modulus (make-parameter 1))
+
+(define current-modulus-param
+  (make-parameter
+   1 (lambda (n)
+       (cond [(<= n 0) (error 'with-modulus "not a positive integer:" n)]
+             [else n]))))
+
+(define (current-modulus)
+  (current-modulus-param))
 
 (: modular-inverse* (integer integer -> integer))
 (define (modular-inverse* n a)
@@ -41,7 +49,7 @@
   (syntax-rules ()
     [(_ modulus . body)
      (let ([n modulus])
-       (parameterize ([current-modulus n])
+       (parameterize ([current-modulus-param n])
          . body))]))
 
 ;; TODO: Not really sure if i need these at all...

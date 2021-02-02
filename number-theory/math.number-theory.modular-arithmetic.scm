@@ -1,20 +1,19 @@
-(module math.number-theory.modular-arithmetic (with-modulus
-                                         current-modulus
-                                         modular-inverse
-                                         modular-expt
-                                         mod+
-                                         mod-
-                                         mod*
-                                         mod/
-                                         modsqr
-                                         modexpt
-                                         mod
-                                         mod=
-                                         mod<
-                                         mod<=
-                                         mod>
-                                         mod>=
-                                         )
+(module math.number-theory.modular-arithmetic ((with-modulus current-modulus-param)
+                                               current-modulus
+                                               modular-inverse
+                                               modular-expt
+                                               mod+
+                                               mod-
+                                               mod*
+                                               mod/
+                                               modsqr
+                                               modexpt
+                                               mod
+                                               mod=
+                                               mod<
+                                               mod<=
+                                               mod>
+                                               mod>=)
   (import scheme
           chicken.type
           (only chicken.base include-relative case-lambda)
