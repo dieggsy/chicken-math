@@ -2,9 +2,8 @@
   (import scheme
           chicken.type
           (only chicken.base include error add1)
-          (only miscmacros ensure))
-
-  (include "utils.scm")
+          (only miscmacros ensure)
+          math.racket-shim)
 
   (: binomial* (integer integer -> integer))
   (define (binomial* n k)

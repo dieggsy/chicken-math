@@ -10,9 +10,8 @@
           (only chicken.base include)
           (only math.number-theory.quadratic quadratic-natural-solutions)
           (only miscmacros ensure)
-          (only math.number-theory.base perfect-square))
-
-  (include "utils.scm")
+          (only math.number-theory.base perfect-square)
+          math.racket-shim)
 
   (: triangle-number (integer -> integer))
   (define (triangle-number n)

@@ -5,9 +5,8 @@
   (import scheme
           chicken.type
           (only chicken.base include conjoin)
-          (only srfi-1 filter))
-
-  (include "utils.scm")
+          (only srfi-1 filter)
+          math.racket-shim)
 
   (: complex-quadratic-solutions  (cplxnum cplxnum cplxnum -> (list-of cplxnum)))
   (define (complex-quadratic-solutions a b c)

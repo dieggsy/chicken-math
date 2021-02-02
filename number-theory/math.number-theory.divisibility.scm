@@ -9,9 +9,8 @@
                 error
                 quotient&remainder
                 let-values
-                exact-integer?))
-
-  (include "utils.scm")
+                exact-integer?)
+          math.racket-shim)
 
   (: divides? (integer integer -> boolean))
   (define (divides? a b)

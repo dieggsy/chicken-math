@@ -2,9 +2,8 @@
   (import scheme
           chicken.type
           (only chicken.base include error add1 sub1)
-          (only miscmacros ensure))
-
-  (include "utils.scm")
+          (only miscmacros ensure)
+          math.racket-shim)
 
   (: eulerian-number* (integer integer -> integer))
   ;;   computes the Eulerian number <n,k>

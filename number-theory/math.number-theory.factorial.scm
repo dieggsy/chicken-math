@@ -7,9 +7,8 @@
           (only chicken.base include error add1 fixnum?)
           (only chicken.fixnum fx*)
           (only srfi-1 list-tabulate find fold)
-          (only miscmacros ensure))
-
-  (include "utils.scm")
+          (only miscmacros ensure)
+          math.racket-shim)
 
   (: fact-table-size fixnum)
   (define fact-table-size 171)

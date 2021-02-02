@@ -120,8 +120,10 @@
     (let ([xa  (fpmin xa ya)]
           [ya  (fpmax xa ya)])
       (cond [(fp= xa 0.0)  ya]
-            [else  (let ((u (fp/ xa ya)))
-                     (fp* ya (fpsqrt (fp+ 1.0 (fp* u u)))))])))
+            [(fprational? ya)
+             (let ((u (fp/ xa ya)))
+               (fp* ya (fpsqrt (fp+ 1.0 (fp* u u)))))]
+            [else ya])))
 
   ;; todo: overflow not likely; underflow likely
   (: fplog/base (float float -> float))

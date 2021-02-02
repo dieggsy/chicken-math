@@ -23,9 +23,9 @@
                 prime-divisors
                 prime?
                 odd-prime?
-                prime-power))
+                prime-power)
+          math.racket-shim)
 
-  (include "utils.scm")
   ;; DEFINITION (Order)
   ;;  If G is a finite group with identity element e,
   ;;  then the order of g in G is the least k>0 such that

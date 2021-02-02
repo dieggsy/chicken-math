@@ -6,7 +6,7 @@
 
   (test-group "math.private.quadratic"
     (test '(-2 2)      (complex-quadratic-solutions 1 0 -4))
-    (test '(0-2i 0+2i) (complex-quadratic-solutions 1 0 +4))
+    (test '(0.0-2i 0.0+2.0i) (complex-quadratic-solutions 1 0 +4))
     (test '(0)         (complex-quadratic-solutions 1 0 0))
     (test '(-2 2)      (quadratic-solutions 1 0 -4))
     (test '()          (quadratic-solutions 1 0 +4))

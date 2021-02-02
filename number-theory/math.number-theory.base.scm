@@ -54,9 +54,8 @@
           (only math.number-theory.divisibility divides?)
           (only math.number-theory.modular-arithmetic modular-expt modular-inverse)
           (only math.base.random random-natural random-integer)
-          (only miscmacros ensure))
-
-  (include "utils.scm")
+          (only miscmacros ensure)
+          math.racket-shim)
 
   ;;
   ;; Configuration

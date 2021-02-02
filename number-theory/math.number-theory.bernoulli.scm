@@ -1,12 +1,11 @@
 (module math.number-theory.bernoulli (bernoulli-number)
   (import scheme
           chicken.type
-          (only chicken.base include error add1 let-values)
+          (only chicken.base include error add1 let-values conjoin)
           (only math.number-theory.binomial binomial)
           (only math.vector.base vector-ref!)
-          (only miscmacros ensure))
-
-  (include "utils.scm")
+          (only miscmacros ensure)
+          math.racket-shim)
 
   ;; Number of globally memoized Bernoulli numbers
   (define num-global-bs 200)

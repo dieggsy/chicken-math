@@ -4,7 +4,7 @@
 
 (test-begin "math")
 
-(include-relative "../utils.scm")
+(import math.racket-shim)
 (include-relative "number-theory.scm")
 
 (test-end "math")

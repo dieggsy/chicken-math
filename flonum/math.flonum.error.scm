@@ -19,10 +19,14 @@
           chicken.type
           (only chicken.base let-values let*-values include-relative)
           (only miscmacros define-syntax-rule)
-          math.flonum.functions)
+          math.flonum.functions
+          math.flonum.utils)
 
-  (include-relative "utils.scm")
 
+  ;(: flsplit (Flonum -> (Values Flonum Flonum)))
+  ;; Splits a flonum into a two flonums `hi' and `lo' with 26 bits precision each, such that
+  ;; |hi| >= |lo| and hi + lo = a. (The extra sign bit accounts for the missing bit.)
+  ;; This function returns (values +nan.0 +nan.0) for |a| >= 1.3393857490036326e+300.
   (define-syntax-rule (fpsplit a-expr)
     (let ([a a-expr])
       (let* ([c   (fp* a (fp+ 1.0 (fpexpt 2.0 27.0)))]
@@ -33,6 +37,9 @@
     (let ([a a-expr] [b b-expr])
       (let ([x2  (+ a b)])
         (values x2 (- b (- x2 a))))))
+
+  ;; =================================================================================================
+  ;; Fast monotone addition and subtraction
 
   ;(: fast-mono-fl-/error (float float -> (Values float float)))
   ;; Returns a+b and its rounding error

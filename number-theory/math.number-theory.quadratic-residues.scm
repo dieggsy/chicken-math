@@ -8,9 +8,9 @@
           (only srfi-1 first second)
           (only math.number-theory.divisibility divides?)
           (only math.number-theory.modular-arithmetic modular-expt)
-          (only math.number-theory.base factorize prime-divisors))
+          (only math.number-theory.base factorize prime-divisors)
+          math.racket-shim)
 
-  (include "utils.scm")
   ;; DEFINITION (Quadratic residue)
   ;;   a in Un is a quadratic residue,
   ;;   if there exists an s such that a=s^2 (mod n)

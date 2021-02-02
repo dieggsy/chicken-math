@@ -8,8 +8,11 @@
           chicken.fixnum
           chicken.random)
 
+  ;;; SHIM
   (define random pseudo-random-integer)
-  (define block-bits 30)
+
+  ;; Random bits are taken in blocks of this size:
+  (define block-bits 29)
   (define block-size (arithmetic-shift 1 block-bits))
 
   (: random-bits (integer -> integer))
@@ -32,6 +35,7 @@
   (define bias-bits (* 2 block-bits))
 
   (: random-natural (integer -> integer))
+  ;; Returns a random integer in the interval [0..n)
   (define (random-natural n)
     (cond
      [(<= n 0)

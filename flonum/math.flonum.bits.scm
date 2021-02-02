@@ -19,10 +19,9 @@
                 unless)
           (only chicken.format format)
           (only chicken.bitwise arithmetic-shift bitwise-ior)
-          (only miscmacros ensure))
+          (only miscmacros ensure)
+          math.racket-shim)
 
-  (include "utils.scm")
-  (include-relative "racket-shim.scm")
 
   (: flonum->bit-field (float -> integer))
   (define (flonum->bit-field x)

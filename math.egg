@@ -3,37 +3,48 @@
  (category math)
  (license "GPL-3.0")
  (component-options
-  (csc-options "-O2"))
+  (csc-options -O3))
  (dependencies srfi-1 r6rs-bytevectors miscmacros)
  (test-dependencies test srfi-1)
  (components
 
+  ;; Racket shim
+  (extension math.racket-shim
+             (source "math.racket-shim.scm"))
+
   ;; Base
-  (extension math.base.random
+  (extension math.base.random ;; 2021-01-31
              (source "base/math.base.random.scm"))
+  (extension math.base.constants ;; 2021-01-31
+             (source "base/math.base.constants.scm"))
 
   ;; Flonum
-  (extension math.flonum.bits
-             (source "flonum/math.flonum.bits.scm"))
-  (extension math.flonum.brent-dekker
+  (extension math.flonum.utils
+             (source "flonum/math.flonum.utils.scm"))
+  (extension math.flonum.bits ;; 2021-01-31
+             (source "flonum/math.flonum.bits.scm")
+             (component-dependencies math.racket-shim))
+  (extension math.flonum.brent-dekker ;; 2021-01-31
              (source "flonum/math.flonum.brent-dekker.scm")
              (component-dependencies math.flonum.constants
                                      math.flonum.functions))
-  (extension math.flonum.constants
+  (extension math.flonum.constants ;; 2021-01-31
              (source "flonum/math.flonum.constants.scm")
              (component-dependencies math.flonum.bits))
-  (extension math.flonum.error
+  (extension math.flonum.error ;; 2021-01-31
              (source "flonum/math.flonum.error.scm")
-             (component-dependencies math.flonum.functions))
-  (extension math.flonum.exp
+             (component-dependencies math.flonum.functions
+                                     math.flonum.utils))
+  (extension math.flonum.exp ;; 2021-01-31
              (source "flonum/math.flonum.exp.scm")
              (component-dependencies math.flonum.functions
                                      math.flonum.constants
                                      math.flonum.polyfun))
-  (extension math.flonum.functions
+  (extension math.flonum.functions ;; 2021-01-31
              (source "flonum/math.flonum.functions.scm")
              (component-dependencies math.flonum.constants))
   (extension math.flonum.polyfun
+  (extension math.flonum.polyfun ;; 2021-01-31
              (source "flonum/math.flonum.polyfun.scm"))
 
   ;; Number theory
@@ -59,7 +70,8 @@
              (source "number-theory/math.number-theory.small-primes.scm"))
 
   (extension math.number-theory.divisibility
-             (source "number-theory/math.number-theory.divisibility.scm"))
+             (source "number-theory/math.number-theory.divisibility.scm")
+             (component-dependencies math.racket-shim))
 
   (extension math.number-theory.modular-arithmetic
              (source "number-theory/math.number-theory.modular-arithmetic.scm")
@@ -70,17 +82,22 @@
              (component-dependencies math.number-theory.modular-arithmetic
                                      math.number-theory.divisibility
                                      math.number-theory.small-primes
-                                     math.base.random))
+                                     math.base.random
+                                     math.racket-shim))
   (extension math.number-theory.factorial
-             (source "number-theory/math.number-theory.factorial.scm"))
+             (source "number-theory/math.number-theory.factorial.scm")
+             (component-dependencies math.racket-shim))
   (extension math.number-theory.binomial
-             (source "number-theory/math.number-theory.binomial.scm"))
+             (source "number-theory/math.number-theory.binomial.scm")
+             (component-dependencies math.racket-shim))
   (extension math.number-theory.bernoulli
              (source "number-theory/math.number-theory.bernoulli.scm")
              (component-dependencies math.number-theory.binomial
-                                     math.vector.base))
+                                     math.vector.base
+                                     math.racket-shim))
   (extension math.number-theory.eulerian-number
-             (source "number-theory/math.number-theory.eulerian-number.scm"))
+             (source "number-theory/math.number-theory.eulerian-number.scm")
+             (component-dependencies math.racket-shim))
   (extension math.number-theory.farey
              (source "number-theory/math.number-theory.farey.scm"))
   (extension math.number-theory.fibonacci
@@ -88,21 +105,25 @@
   (extension  math.number-theory.partitions
               (source "number-theory/math.number-theory.partitions.scm"))
   (extension math.number-theory.quadratic
-             (source "number-theory/math.number-theory.quadratic.scm"))
+             (source "number-theory/math.number-theory.quadratic.scm")
+             (component-dependencies math.racket-shim))
   (extension math.number-theory.polygonal
              (source "number-theory/math.number-theory.polygonal.scm")
              (component-dependencies math.number-theory.base
-                                     math.number-theory.quadratic))
+                                     math.number-theory.quadratic
+                                     math.racket-shim))
   (extension math.number-theory.primitive-roots
              (source "number-theory/math.number-theory.primitive-roots.scm")
              (component-dependencies math.number-theory.divisibility
                                      math.number-theory.modular-arithmetic
-                                     math.number-theory.base))
+                                     math.number-theory.base
+                                     math.racket-shim))
   (extension math.number-theory.quadratic-residues
              (source "number-theory/math.number-theory.quadratic-residues.scm")
              (component-dependencies math.number-theory.divisibility
                                      math.number-theory.modular-arithmetic
-                                     math.number-theory.base))
+                                     math.number-theory.base
+                                     math.racket-shim))
   (extension math.number-theory.tangent-number
              (source "number-theory/math.number-theory.tangent-number.scm"))
 
@@ -110,3 +131,8 @@
   (extension math.vector.base
              (source "vector/math.vector.base.scm"))
   ))
+
+;; TODO:
+;; Add note about unsafe fx operations - it seems racket's implementation
+;; actually uses /safe/ operations (even when specifying unsafe), but we do
+;; not.
