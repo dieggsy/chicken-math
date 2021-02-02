@@ -14,7 +14,7 @@
 (define (modular-inverse* n a)
   (cond ((zero? a) (error 'modular-inverse "bad argument type - not a nonzero integer" a))
         ((coprime? n a) (modulo (car (bezout a n)) n))
-        (else (error 'modular-inverse (format "bad argument typea - not coprime to modulus ~A: ~A" n a)))))
+        (else (error 'modular-inverse (format "bad argument type - not coprime to modulus ~A: ~A" n a)))))
 
 (: modular-expt* (integer integer integer -> integer))
 (define (modular-expt* n a b)
