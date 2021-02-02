@@ -43,7 +43,6 @@
   (extension math.flonum.functions ;; 2021-01-31
              (source "flonum/math.flonum.functions.scm")
              (component-dependencies math.flonum.constants))
-  (extension math.flonum.polyfun
   (extension math.flonum.polyfun ;; 2021-01-31
              (source "flonum/math.flonum.polyfun.scm"))
 
@@ -129,8 +128,7 @@
 
   ;; Vector
   (extension math.vector.base
-             (source "vector/math.vector.base.scm"))
-  ))
+             (source "vector/math.vector.base.scm"))))
 
 ;; TODO:
 ;; Add note about unsafe fx operations - it seems racket's implementation
