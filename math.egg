@@ -1,4 +1,5 @@
-((author "Diego Mundo")
+((author "Neil Toronto, Jens Axel Søgaard")
+ (maintainer "Diego A. Mundo")
  (synopsis "Chicken port of Racket's math library")
  (category math)
  (license "GPL-3.0")
