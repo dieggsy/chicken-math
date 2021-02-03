@@ -1,10 +1,11 @@
 (module math.number-theory.polygonal (triangle-number
-                                triangle-number?
-                                square-number?
-                                pentagonal-number pentagonal-number?
-                                hexagonal-number hexagonal-number?
-                                heptagonal-number heptagonal-number?
-                                octagonal-number octagonal-number?)
+                                      triangle-number?
+                                      sqr
+                                      square-number?
+                                      pentagonal-number pentagonal-number?
+                                      hexagonal-number hexagonal-number?
+                                      heptagonal-number heptagonal-number?
+                                      octagonal-number octagonal-number?)
   (import scheme
           chicken.type
           (only chicken.base include)
@@ -20,6 +21,10 @@
   (: triangle-number? (integer -> boolean))
   (define (triangle-number? n)
     (not (null? (quadratic-natural-solutions 1/2 1/2 (- n)))))
+
+  (: sqr (integer -> integer))
+  (define (sqr n)
+    (* n n))
 
   (: square-number? (integer -> boolean))
   (define (square-number? n)
