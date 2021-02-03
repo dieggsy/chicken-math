@@ -1,10 +1,10 @@
 (module math.number-theory.primitive-roots (unit-group
-                                      unit-group-order
-                                      unit-group-orders
-                                      exists-primitive-root?
-                                      primitive-root?
-                                      primitive-root
-                                      primitive-roots)
+                                            unit-group-order
+                                            unit-group-orders
+                                            exists-primitive-root?
+                                            primitive-root?
+                                            primitive-root
+                                            primitive-roots)
 
   (import scheme
           chicken.type
@@ -91,7 +91,7 @@
     (cond [(<= g 0)  (error 'primitive-root? "bad argument type - not a positive integer" g)]
           [(<= n 0)  (error 'primitive-root? "bad argument type - not a positive integer" n)]
           [(not (coprime? g n))
-           (error 'primitive-root? "expected coprime arguments; given ~e and ~e" g n)]
+           (error 'primitive-root? (format "expected coprime arguments; given ~A and ~A") g n)]
           [else
            (let ((phi-n (totient n)))
              (with-modulus n
