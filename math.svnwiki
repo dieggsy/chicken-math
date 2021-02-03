@@ -1,0 +1,1336 @@
+[[toc:]]
+
+== math
+
+=== Introduction
+
+math is a chicken port of racket's math library.
+
+The following documentation is largely taken directly from the racket
+documentation, but tweaked for the CHICKEN implementation.
+
+==== math.number-theory
+
+===== Congruences and modular arithmetic
+<procedure>(divides? m n) -> boolean</procedure>
+
+; m : integer
+; n : integer
+
+Returns {{#t}} if {{m}} divides {{n}}, {{#f}} otherwise.
+
+Examples:
+<enscript highlight="scheme">
+> (divides? 2 9)
+#f
+> (divides? 2 8)
+#t
+</enscript>
+
+Note that 0 cannot divide anything:
+
+<enscript highlight="scheme">
+> (divides? 0 5)
+#f
+> (divides? 0 0)
+#f
+</enscript>
+
+Practically, if {{(divides? m n)}} is {{#t}}, then {{(/ n m)}} will return an integer.
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Divisor|Divisor]]
+
+<procedure>(bezout a b c ...) -> (list-of integer)</procedure>
+
+; a : integer
+; b : integer
+; c : integer
+
+Given integers {{a b c ...}} returns a list of integers {{(list u v w ...)}}
+such that {{(gcd a b c ...)}} = {{(+ (* a u) (* b v) (* c w) ...)}}.
+
+Examples:
+<enscript highlight="scheme">
+> (bezout 6 15)
+(-2 1)
+> (+ (* -2 6) (* 1 15))
+3
+> (gcd 6 15)
+3
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/B%C3%A9zout's_identity|Bézout's Identity]]
+
+<procedure>(coprime? a b ...) -> boolean</procedure>
+
+; a : integer
+; b : integer
+
+Returns {{#t}} if the integers {{a b ...}} are coprime. Formally, a set of
+integers is considered coprime (also called relatively prime) if their greatest
+common divisor is 1.
+
+Example:
+<enscript highlight="scheme">
+> (coprime? 2 6 15)
+#t
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Coprime|Coprime]]
+
+<procedure>(pairwise-coprime? a b ...) -> boolean</procedure>
+
+; a : integer
+; b : integer
+
+Returns {{#t}} if the integers {{a b ...}} are ''pairwise'' coprime, meaning that each
+pair of integers is coprime.
+
+The numbers 2, 6 and 15 are coprime, but not ''pairwise'' coprime, because 6 and 15
+share the factor 3:
+<enscript highlight="scheme">
+> (pairwise-coprime? 2 6 15)
+#f
+</enscript>
+
+Wikipedia:[[https://en.wikipedia.org/wiki/Pairwise_coprime|Pairwise Coprime]]
+
+<procedure>(solve-chinese as ns) -> integer</procedure>
+
+; as : (list-of integer)
+; ns : (list-of integer)
+
+Given a length-k list of integers as and a length-k list of coprime moduli ns,
+(solve-chinese as ns) returns the least natural number x that is a solution to
+the equations
+
+ x = a₁ (mod n₁)
+  ...
+ x = aₖ (mod nₖ)
+
+The solution {{x}} is less than {{(* n1 ... nk)}}.
+
+The moduli {{ns}} must all be positive.
+
+What is the least number {{x}} that when divided by 3 leaves a remainder of 2, when
+divided by 5 leaves a remainder of 3, and when divided by 7 leaves a remainder
+of 2?
+<enscript highlight="scheme">
+> (solve-chinese '(2 3 2) '(3 5 7))
+23
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Chinese_remainder_theorem|Chinese Remainder Theorem]]
+
+<procedure>(quadratic-residue? a n) -> boolean</procedure>
+
+; a : integer
+; n : integer
+
+Returns {{#t}} if {{a}} is a quadratic residue modulo {{n}}, otherwise {{#f}}. The modulus
+{{n}} must be positive, and a must be nonnegative.
+
+Formally, {{a}} is a quadratic residue modulo {{n}} if there exists a number
+{{x}} such that {{(* x x)}} = {{a}} (mod {{n}}). In other words,
+{{(quadratic-residue? a n)}} is {{#t}} when {{a}} is a perfect square modulo
+{{n}}.
+
+Examples:
+<enscript highlight="scheme">
+> (quadratic-residue? 0 4)
+#f
+> (quadratic-residue? 1 4)
+#t
+> (quadratic-residue? 2 4)
+#f
+> (quadratic-residue? 3 4)
+#f
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Quadratic_residue|Quadratic Residue]]
+
+<procedure>(quadratic-character a p) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Returns the value of the quadratic character modulo the prime {{p}}. That is,
+for a non-zero {{a}} the number 1 is returned when {{a}} is a quadratic
+residue, and -1 is returned when {{a}} is a non-residue. If {{a}} is zero, then
+0 is returned.
+
+If {{a}} is negative or {{p}} is not positive, quadratic-character raises an
+error. If {{p}} is not prime, (quadratic-character a p) is indeterminate.
+
+This function is also known as the ''Legendre symbol''.
+
+<enscript highlight="scheme">
+> (quadratic-character 0 5)
+0
+> (quadratic-character 1 5)
+1
+> (quadratic-character 2 5)
+-1
+> (quadratic-character 3 5)
+-1
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Legendre_symbol|Legendre Symbol]]
+
+<procedure>(jacobi-symbol a n) -> integer</procedure>
+
+; a : integer
+; n : integer
+
+Computes the Jacobi symbol for any nonnegative integer {{a}} and any positive
+odd integer {{n}}.
+
+If {{n}} is not an odd positive integer, {{(jacobi-symbol a n)}} throws an exception.
+
+<enscript highlight="scheme">
+> (jacobi-symbol 1 1)
+1
+> (jacobi-symbol 8 11)
+-1
+> (jacobi-symbol 39 27)
+0
+> (jacobi-symbol 22 59)
+1
+> (jacobi-symbol 32 8)
+Error: (jacobi-symbol) bad argument type - not an odd integer: 8
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Jacobi_symbol|Jacobi Symbol]]
+
+<procedure>(modular-inverse a n) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Returns the inverse of a modulo {{n}} if {{a}} and {{n}} are coprime, otherwise raises an
+error. The modulus {{n}} must be positive, and {{a}} must be nonzero.
+
+Formally, if {{a}} and {{n}} are coprime, {{b}} = {{(modular-inverse a n)}} is the unique
+natural number less than {{n}} such that {{(* a b)}} = {{1}} (mod {{n}}).
+
+<enscript highlight="scheme">
+> (modular-inverse 2 5)
+3
+> (modulo (* 2 3) 5)
+1
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Modular_multiplicative_inverse|Multiplicative Inverse]]
+
+<procedure>(modular-expt a b n) -> integer</procedure>
+
+; a : integer
+; b : integer
+; n : integer
+
+Computes {{(modulo (expt a b) n)}}, but much more efficiently. The modulus {{n}} must
+be positive, and the exponent {{b}} must be nonnegative.
+
+<enscript highlight="scheme">
+> (modulo (expt -6 523) 19)
+13
+> (modular-expt -6 523 19)
+13
+> (modular-expt 9 158235208 19)
+4
+> ; don't try this at home!
+  (modulo (expt 9 158235208) 19)
+4
+</enscript>
+
+===== Parameterized Modular Arithmetic
+
+The {{math.number-theory}} library supports modular arithmetic parameterized on
+a current modulus. For example, the code
+
+<enscript highlight="scheme">
+(with-modulus n
+  (mod= (modexpt a b) c))
+</enscript>
+
+corresponds with the mathematical statement ''a^b'' = ''c'' (mod ''n'').
+
+The current modulus is stored in a parameter that, for performance reasons, can
+only be set using with-modulus. (The basic modular operators cache parameter
+reads, and this restriction guarantees that the cached values are current.
+'''NOTE:''' I'm not entirely sure this is true for the chicken port, as a
+slightly more complicated racket syntax-case has been turned into a simple
+syntax-rule for {{(parameterize ...)}})
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Modular_arithmetic|Modular Arithmetic]]
+
+<syntax>(with-modulus n body ...)</syntax>
+
+; n : integer
+
+Alters the current modulus within the dynamic extent of {{body}}. The
+expression {{n}} must evaluate to a positive integer.
+
+By default, the current modulus is 1, meaning that every modular arithmetic
+expression that does not raise an error returns 0.
+
+<procedure>(current-modulus) -> integer</procedure>
+
+Returns the current modulus.
+
+Examples:
+
+<enscript highlight="scheme">
+> (current-modulus)
+1
+> (with-modulus 5 (current-modulus))
+5
+</enscript>
+
+<procedure>(mod x) -> integer</procedure>
+
+; x : exact rational
+
+Converts a rational number {{x}} to a natural number less than the current
+modulus.
+
+If {{x}} is an integer, this is equivalent to {{(modulo x n)}}. If {{x}} is a
+fraction, an integer input is generated by multiplying its numerator by its
+denominator’s modular inverse.
+
+Examples:
+
+<enscript highlight="scheme">
+> (with-modulus 7 (mod (* 218 7)))
+0
+> (with-modulus 7 (mod 3/2))
+5
+> (with-modulus 7 (mod/ 3 2))
+5
+> (with-modulus 7 (mod 3/7))
+Error: (modular-inverse) bad argument type - not coprime to modulus 7: 7
+</enscript>
+
+<procedure>(mod+ a ...) -> integer</procedure>
+<procedure>(mod* a ...) -> integer</procedure>
+
+; a : integer
+
+Equivalent to {{(modulo (+ a ...) (current-modulus))}} and {{(modulo (* a ...) (current-modulus))}},
+respectively, but generate smaller intermediate values.
+
+<procedure>(modsqr a) -> integer</procedure>
+<procedure>(modexpt a b) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Equivalent to {{(mod* a a)}} and {{(modular-expt a b (current-modulus))}}, respectively.
+
+<procedure>(mod- a b ...) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Equivalent to {{(modulo (- a b ...) (current-modulus))}}, but generates smaller
+intermediate values. Note that {{(mod- a)}} = {{(mod (- a))}}.
+
+<procedure>(mod/ a b ...) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Divides a by {{(* b ...)}}, by multiplying {{a}} by the multiplicative inverse of
+{{(* b ...)}}. The one-argument variant returns the modular inverse of {{a}}.
+
+Note that {{(mod/ a b ...)}} is '''not''' equivalent to
+{{(modulo (/ a b ...) (current-modulus))}}; see {{mod=}} for a demonstration.
+
+<procedure>(mod= a b ...) -> boolean</procedure>
+<procedure>(mod< a b ...) -> boolean</procedure>
+<procedure>(mod<= a b ...) -> boolean</procedure>
+<procedure>(mod> a b ...) -> boolean</procedure>
+<procedure>(mod>= a b ...) -> boolean</procedure>
+
+; a : integer
+; b : integer
+
+Each of these is equivalent to {{(op (mod a) (mod b) ...)}}, where op is the
+corresponding numeric comparison function. Additionally, when given one
+argument, the inequality tests always return {{#t}}.
+
+Suppose we wanted to know why 17/4 = 8 (mod 15), but 51/12 (mod 15) is
+undefined, even though normally 51/12 = 17/4. In code,
+
+<enscript highlight="scheme">
+> (with-modulus 15 (mod/ 17 4))
+8
+> (/ 51 12)
+17/4
+> (with-modulus 15 (mod/ 51 12))
+Error: (modular-inverse) bad argument type - not coprime to modulus 15: 12
+</enscript>
+
+We could try to divide by brute force: find, modulo 15, all the numbers {{a}} for
+which {{(mod* a 4)}} is 17, then find all the numbers {{b}} for which {{(mod* a 12)}} is
+51.
+<enscript highlight="scheme">
+(import srfi-42)
+> (with-modulus 15
+    (list-ec (:range a 15)
+             (if (mod= (mod* a 4) 17))
+      a))
+(8)
+> (with-modulus 15
+    (list-ec (:range a 15)
+             (if (mod= (mod* a 12) 51))
+      a))
+(3 8 13)
+</enscript>
+
+So the problem isn't that {{b}} doesn't exist, it's that {{b}} isn't
+''unique''.
+
+===== Primes
+<procedure>(prime? z) -> boolean</procedure>
+
+; z : integer
+
+Returns {{#t}} if {{z}} is a prime, {{#f}} otherwise.
+
+Formally, an integer {{z}} is prime when the only positive divisors of {{z}}
+are 1 and {{(abs z)}}.
+
+The positive primes below 20 are:
+<enscript highlight="scheme">
+> (filter prime? (iota 20 1))
+(2 3 5 7 11 13 17 19)
+</enscript>
+
+The corresponding negative primes are:
+<enscript highlight="scheme">
+> (filter prime? (iota 20 0 -1))
+(-2 -3 -5 -7 -11 -13 -17 -19)
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Prime_number|Prime Number]]
+
+<procedure>(odd-prime? z) -> boolean</procedure>
+
+; z : integer
+
+Returns {{#t}} if {{z}} is a odd prime, {{#f}} otherwise.
+
+<enscript highlight="scheme">
+> (odd-prime? 2)
+#f
+> (odd-prime? 3)
+#t
+</enscript>
+
+<procedure>(nth-prime n) -> integer</procedure>
+
+; n : integer
+
+Returns the {{n}}th positive prime; {{n}} must be nonnegative.
+
+<enscript highlight="scheme">
+> (nth-prime 0)
+2
+> (nth-prime 1)
+3
+> (nth-prime 2)
+5
+</enscript>
+
+<procedure>(random-prime n) -> integer</procedure>
+
+; n : integer
+
+Returns a random prime smaller than {{n}}, which must be greater than 2.
+
+The function {{random-prime}} picks random numbers below {{n}} until a prime is
+found.
+
+<enscript highlight="scheme">
+> (random-prime 10)
+3
+> (random-prime 10)
+2
+> (random-prime 10)
+5
+</enscript>
+
+<procedure>(next-prime z) -> integer</procedure>
+
+; z : integer
+
+Returns the first prime larger than {{z}}.
+
+<enscript highlight="scheme">
+> (next-prime 4)
+5
+> (next-prime 5)
+7
+</enscript>
+
+<procedure>(prev-prime z) -> integer</procedure>
+
+Returns the first prime smaller than {{z}}.
+
+<enscript highlight="scheme">
+> (prev-prime 4)
+3
+> (prev-prime 5)
+3
+</enscript>
+
+<procedure>(next-primes z n) -> (list-of integer)</procedure>
+
+; z : integer
+; n : integer
+
+Returns list of the next {{n}} primes larger than {{z}}; {{n}} must be
+nonnegative.
+
+<enscript highlight="scheme">
+> (next-primes 2 4)
+(3 5 7 11)
+</enscript>
+
+<procedure>(prev-primes z n) -> (list-of integer)</procedure>
+
+; z : integer
+; n : integer
+
+Returns list of the next {{n}} primes smaller than {{z}}; {{n}} must be
+nonnegative.
+
+<enscript highlight="scheme">
+> (prev-primes 13 4)
+(11 7 5 3)
+</enscript>
+
+<procedure>(factorize n) -> (list-of (list integer integer))</procedure>
+
+; n : integer
+
+Returns the factorization of a natural number {{n}}. The factorization consists of
+a list of corresponding primes and exponents. The primes will be in ascending
+order.
+
+The prime factorization of 600 = 2^3 * 3^1 * 5^2:
+
+<enscript highlight="scheme">
+> (factorize 600)
+((2 3) (3 1) (5 2))
+</enscript>
+
+<procedure>(defactorize f) -> integer</procedure>
+
+; f : (list-of (list integer integer))
+
+Returns the natural number, whose factorization is given by {{f}}. The
+factorization {{f}} is represented as described in {{factorize}}.
+
+<enscript highlight="scheme">
+> (defactorize '((2 3) (3 1) (5 2)))
+600
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Integer_factorization|Integer Factorization]]
+
+<procedure>(divisors z) -> (list-of integer)</procedure>
+
+; z : integer
+
+Returns a list of all positive divisors of the integer {{z}}. The divisors appear
+in ascending order.
+
+<enscript highlight="scheme">
+> (divisors 120)
+(1 2 3 4 5 6 8 10 12 15 20 24 30 40 60 120)
+> (divisors -120)
+(1 2 3 4 5 6 8 10 12 15 20 24 30 40 60 120)
+</enscript>
+
+<procedure>(prime-divisors z) -> (list-of integer)</procedure>
+
+; z : integer
+
+Returns a list of all positive prime divisors of the integer {{z}}. The divisors
+appear in ascending order.
+
+<enscript highlight="scheme">
+> (prime-divisors 120)
+'(2 3 5)
+</enscript>
+
+<procedure>(prime-exponents z) -> (list-of integer)</procedure>
+
+; z : integer
+
+Returns a list of the exponents of in a factorization of the integer {{z}}.
+
+<enscript highlight="scheme">
+> (define z (* 2 2 2 3 5 5))
+> (prime-divisors z)
+(2 3 5)
+> (prime-exponents z)
+(3 1 2)
+</enscript>
+
+===== Roots
+
+<procedure>(integer-root n m) -> integer</procedure>
+
+; n : integer
+; m : integer
+
+Returns the mth integer root of {{n}}. This is the largest integer {{r}} such that
+{{(expt r m)}} <= {{n}}.
+
+<enscript highlight="scheme">
+> (integer-root (expt 3 4) 4)
+3
+> (integer-root (+ (expt 3 4) 1) 4)
+3
+</enscript>
+
+<procedure>(integer-root/remainder n m) -> integer integer</procedure>
+
+; n : integer
+; m : integer
+
+Returns two values. The first, {{r}}, is the {{m}}th integer root of {{n}}. The
+second is {{n}}-{{r}}^{{m}}.
+
+<enscript highlight="scheme">
+> (integer-root/remainder (expt 3 4) 4)
+3
+0
+> (integer-root/remainder (+ (expt 3 4) 1) 4)
+3
+1
+</enscript>
+
+===== Powers
+
+<procedure>(max-dividing-power a b) -> integer</procedure>
+
+; a : integer
+; b : integre
+
+Returns the largest exponent, {{n}}, of a power with base {{a}} that divides
+{{b}}.
+
+That is, {{(expt a n)}} divides {{b}} but {{(expt a (+ n 1))}} does not divide {{b}}.
+
+<enscript highlight="scheme">
+> (max-dividing-power 3 (expt 3 4))
+4
+> (max-dividing-power 3 5)
+0
+</enscript>
+
+<procedure>(perfect-power m) -> (or (list integer integer) #f)</procedure>
+
+; m : integer
+
+If {{m}} is a perfect power, a list with two elements {{b}} and {{n}} such that
+{{(expt b n)}} = {{m}} is returned, otherwise {{#f}} is returned.
+
+<enscript highlight="scheme">
+> (perfect-power (expt 3 4))
+(3 4)
+> (perfect-power (+ (expt 3 4) 1))
+#f
+</enscript>
+
+<procedure>(perfect-power? m) -> boolean</procedure>
+
+; m : integer
+
+Returns {{#t}} if {{m}} is a perfect power, otherwise {{#f}}.
+
+<enscript highlight="scheme">
+> (perfect-power? (expt 3 4))
+#t
+> (perfect-power? (+ (expt 3 4) 1))
+#f
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Perfect_power|Perfect Power]]
+
+<procedure>(prime-power m) -> (or (list integer integer) #f)</procedure>
+
+; m : integer
+
+If {{M}} is a power of the form {{(expt p n)}} where p is prime, then a list with the
+prime and the exponent is returned, otherwise {{#f}} is returned.
+
+<enscript highlight="scheme">
+> (prime-power (expt 3 4))
+(3 4)
+> (prime-power (expt 6 4))
+#f
+</enscript>
+
+<procedure>(prime-power? m) -> boolean</procedure>
+
+; m : integer
+
+Returns {{#t}} if {{m}} is a prime power, otherwise {{#f}}.
+
+<enscript highlight="scheme">
+> (prime-power? (expt 3 4))
+#t
+> (prime-power? (expt 6 4))
+#f
+> (prime-power? 1)
+#f
+> (prime-power? 0)
+#f
+</enscript>
+
+<procedure>(odd-prime-power? m) -> boolean</procedure>
+
+; m : integer
+
+Returns {{#t}} if {{m}} is a power of an odd prime, otherwise {{#f}}.
+
+<enscript highlight="scheme">
+> (odd-prime-power? (expt 2 4))
+#f
+> (odd-prime-power? (expt 3 4))
+#t
+> (odd-prime-power? (expt 15 4))
+#f
+</enscript>
+
+<procedure>(as-power m) -> integer integer</procedure>
+
+; m : integer
+
+Returns two values {{b}} and {{n}} such that {{m}} = {{(expt b n)}} and {{n}}
+is maximal.
+
+<enscript highlight="scheme">
+> (as-power (* (expt 2 4) (expt 3 4)))
+6
+4
+> (expt 6 4)
+1296
+> (* (expt 2 4) (expt 3 4))
+1296
+> (as-power (* (expt 2 4) (expt 3 5)))
+3888
+1
+</enscript>
+
+<procedure>(prefect-square m) -> (or integer #f)</procedure>
+
+Returns {{(sqrt m)}} if {{m}} is perfect square, otherwise {{#f}}.
+
+<enscript highlight="scheme">
+> (perfect-square 9)
+3
+> (perfect-square 10)
+#f
+</enscript>
+
+===== Multiplicative and Arithmetic Functions
+
+The functions in this section are ''multiplicative'' (with exception of the Von
+Mangoldt function). In number theory, a multiplicative function is a function
+{{f}} such that {{(f (* a b))}} = {{(* (f a) (f b))}} for all coprime natural
+numbers {{a}} and {{b}}.
+
+<procedure>(totient n) -> integer</procedure>
+
+; n : integer
+
+Returns the number of integers from 1 to {{n}} that are coprime with {{n}}.
+
+This function is known as Euler's totient or phi function.
+
+<enscript highlight="scheme">
+> (totient 9)
+6
+> (length (filter (curry coprime? 9) (range 10)))
+6
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Euler%27s_totient_function|Euler's Totient]]
+
+<procedure>(moebius-mu n) -> integer</procedure>
+
+; n : integer
+
+Returns:
+
+* 1 if {{n}} is a square-free product of an even number of primes
+* -1 if {{n}} is a square-free product of an odd number of primes
+* 0 if {{n}} has a multiple prime factor
+
+<enscript highlight="scheme">
+> (moebius-mu (* 2 3 5))
+-1
+> (moebius-mu (* 2 3 5 7))
+1
+> (moebius-mu (* 2 2 3 5 7))
+0
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/M%C3%B6bius_function|Moebius Function]]
+
+<procedure>(divisor-sum n k) -> integer</procedure>
+
+; n : integer
+; k : integer
+
+Returns sum of the {{k}}th powers of all divisors of {{n}}.
+
+<enscript highlight="scheme">
+> (divisor-sum 12 2)
+210
+> (apply + (map sqr (divisors 12)))
+210
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Divisor_function|Divisor Function]]
+
+<procedure>(prime-omega n) -> integer</procedure>
+
+; n : integer
+
+Counting multiplicities the number of prime factors of {{n}} is returned.
+
+<enscript highlight="scheme">
+> (prime-omega (* 2 2 2 3 3 5))
+6
+</enscript>
+
+OEIS: [[https://oeis.org/A001222|Big Omega]], [[https://oeis.org/wiki/Omega(n),_number_of_prime_factors_of_n_(with_multiplicity)|Big Omega]]
+
+<procedure>(mangoldt-lambda n) -> number</procedure>
+
+; n : integer
+
+The von Mangoldt function. If n=p^k for a prime {{p}} and an integer {{k>=1}}
+then {{(log n)}} is returned. Otherwise {{0}} is returned.
+
+Note: The Von Mangoldt function is not multiplicative.
+
+<enscript highlight="scheme">
+> (mangoldt-lambda (* 3 3))
+1.0986122886681098
+> (log 3)
+1.0986122886681098
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Von_Mangoldt_function|Von Mangoldt Function]]
+
+===== Number Sequences
+
+<procedure>(bernoulli-number n) -> ratnum</procedure>
+
+; n : integer
+
+Returns the {{n}}th Bernoulli number; {{n}} must be nonnegative.
+
+<enscript highlight="scheme">
+> (map bernoulli-number (iota 9))
+(1 -1/2 1/6 0 -1/30 0 1/42 0 -1/30)
+</enscript>
+
+Note that these are the ''first'' Bernoulli numbers, since
+{{(bernoulli-number 1)}} = {{-1/2}}.
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Bernoulli_number|Bernoulli Number]]
+
+<procedure>(eulerian-number n k) -> integer</procedure>
+
+; n : integer
+; k : integer
+
+Returns the Eulerian number {{<n,k>}}; both arguments must be nonnegative.
+
+<enscript highlight="scheme">
+> (eulerian-number 5 2)
+66
+</enscript>
+
+Wikipedia: [[http://mathworld.wolfram.com/EulerianNumber.html|Eulerian Number]]
+
+<procedure>(fibonacci n) -> integer</procedure>
+
+; n : integer
+
+Returns the {{n}}th Fibonacci number; {{n}} must be nonnegative.
+
+The ten first Fibonacci numbers:
+<enscript highlight="scheme">
+> (map fibonacci (iota 10))
+'(0 1 1 2 3 5 8 13 21 34)
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Fibonacci_number|Fibonacci Number]]
+
+<procedure>(make-fibonaci a b) -> (integer -> integer)</procedure>
+
+; a : integer
+; b : integer
+
+Returns a function representing a Fibonacci sequence with the first two numbers
+{{a}} and {{b}}. The {{fibonacci}} function is defined as {{(make-fibonacci 0 1)}}.
+
+The Lucas numbers are defined as a Fibonacci sequence starting with 2 and 1:
+
+<enscript highlight="scheme">
+> (map (make-fibonacci 2 1) (iota 10))
+(2 1 3 4 7 11 18 29 47 76)
+</enscript>
+
+Wikipedia: [[https://wikipedia.org/wiki/Lucas_number|Lucas Number]]
+
+<procedure>(modular-fibonacci n m) -> integer</procedure>
+
+; n : integer
+; m : integer
+
+Returns the {{n}}th Fibonacci number modulo {{m}}; {{n}} must be nonnegative
+and {{m}} must be positive.
+
+The ten first Fibonacci numbers modulo 5:
+<enscript highlight="scheme">
+> (map (lambda (n) (modular-fibonacci n 5)) (range 10))
+(0 1 1 2 3 0 3 3 1 4)
+</enscript>
+
+<procedure>(make-modular-fibonacci a b) -> (integer integer -> integer)</procedure>
+
+; a : integer
+; b : integer
+
+Like {{make-fibonacci}}, but makes a modular fibonacci sequence.
+
+<procedure>(farey-sequence n) -> (list-of ratnum)</procedure>
+
+; n : integer
+
+Returns a list of the numbers in the {{n}}th Farey sequence; {{n}} must be positive.
+
+The {{n}}th Farey sequence is the sequence of all completely reduced rational
+numbers from 0 to 1 which denominators are less than or equal to {{n}}.
+
+<enscript highlight="scheme">
+> (farey-sequence 1)
+(0 1)
+> (farey-sequence 2)
+(0 1/2 1)
+> (farey-sequence 3)
+(0 1/3 1/2 2/3 1)
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Farey_sequence|Farey Sequence]]
+
+<procedure>(tangent-number n) -> integer</procedure>
+
+; n : integer
+
+Returns the {{n}}th tangent number; {{n}} must be nonnegative.
+
+<enscript highlight="scheme">
+> (tangent-number 1)
+1
+> (tangent-number 2)
+0
+> (tangent-number 3)
+2
+</enscript>
+
+MathWorld: [[http://mathworld.wolfram.com/TangentNumber.html|Tangent Number]]
+
+===== Combinatorics
+
+<procedure>(factorial n) -> integer</procedure>
+
+; n : integer
+
+Returns the factorial of {{n}}, which must be nonnegative. The factorial of
+{{n}} is the number {{(* n (- n 1) (- n 2) ... 1)}}.
+
+<enscript highlight="scheme">
+> (factorial 3)
+6
+> (factorial 0)
+1
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Factorial|Factorial]]
+
+<procedure>(binomial n k) -> integer</procedure>
+
+; n : integer
+; k : integer
+
+Returns the number of ways to choose a set of k items from a set of n items;
+i.e. the order of the k items is not significant. Both arguments must be
+nonnegative.
+
+When {{k > n}}, {{(binomial n k) = 0}}. Otherwise, {{(binomial n k)}} is
+equivalent to {{(/ (factorial n) (factorial k) (factorial (- n k)))}},
+but computed more quickly.
+
+<enscript highlight="scheme">
+> (binomial 5 3)
+10
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Binomial_coefficient|Binomial Coefficient]]
+
+<procedure>(permutations n k) -> integer</procedure>
+
+; n : integer
+; k : integer
+
+Returns the number of ways to choose a sequence of {{k}} items from a set of n
+items; i.e. the order of the {{k}} items is significant. Both arguments must be
+nonnegative.
+
+When {{k > n}}, {{(permutations n k) = 0}}. Otherwise, {{(permutations n k)}}
+is equivalent to {{(/ (factorial n) (factorial (- n k)))}}.
+
+<enscript highlight="scheme">
+> (permutations 5 3)
+60
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Permutation#Permutations_in_combinatorics|Permutations]]
+
+<procedure>(multinomial n ks) -> integer</procedure>
+
+; n : integer
+; ks : (list-of integer)
+
+A generalization of binomial to multiple sets of choices; e.g.
+{{(multinomial n (list k0 k1 k2))}} is the number of ways to choose a set of
+{{k0}} items, a set of {{k1}} items, and a set of {{k2}} items from a set of {{n}}
+items. All arguments must be nonnegative.
+
+When {{(apply + ks) = n}}, this is equivalent to
+{{(apply / (factorial n) (map factorial ks))}}. Otherwise, multinomial returns 0.
+
+<enscript highlight="scheme">
+> (multinomial 5 '(3 2))
+10
+> (= (multinomial 8 '(5 3))
+     (binomial 8 5)
+     (binomial 8 3))
+#t
+> (multinomial 10 '(5 3 2))
+2520
+> (multinomial 0 '())
+1
+> (multinomial 4 '(1 1))
+0
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Multinomial_theorem#Multinomial_coefficients|Multinomial Coefficient]]
+
+<procedure>(partitions n) -> integer</procedure>
+
+; n : integer
+
+Returns the number of partitions of {{n}}, which must be nonnegative. A partition
+of a positive integer {{n}} is a way of writing {{n}} as a sum of positive integers.
+The number 3 has the partitions {{(+ 1 1 1)}}, {{(+ 1 2)}} and {{(+ 3)}}.
+
+<enscript highlight="scheme">
+> (partitions 3)
+3
+> (partitions 4)
+5
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Partition_(number_theory)|Partition]]
+
+===== Polygonal numbers
+
+<procedure>(triangle-number? n) -> boolean</procedure>
+<procedure>(square-number? n) -> boolean</procedure>
+<procedure>(pentagonal-number? n) -> boolean</procedure>
+<procedure>(hexagonal-number? n) -> boolean</procedure>
+<procedure>(heptagonal-number? n) -> boolean</procedure>
+<procedure>(octagonal-number? n) -> boolean</procedure>
+
+; n : integer
+
+These functions check whether the input is a polygonal number of the types
+triangle, square, pentagonal, hexagonal, heptagonal and octogonal respectively.
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Polygonal_number|Polygonal Number]]
+
+
+<procedure>(triangle-number n) -> boolean</procedure>
+<procedure>(sqr n) -> boolean</procedure>
+<procedure>(pentagonal-number n) -> boolean</procedure>
+<procedure>(hexagonal-number n) -> boolean</procedure>
+<procedure>(heptagonal-number n) -> boolean</procedure>
+<procedure>(octagonal-number n) -> boolean</procedure>
+
+; n : integer
+
+These functions return the {{n}}th polygonal number of the corresponding type
+of polygonal number.
+
+===== Fractions
+
+<procedure>(mediant x y) -> ratnum</procedure>
+
+; x : ratnum
+; y : ratnum
+
+Computes the mediant of the numbers {{x}} and {{y}}. The mediant of two
+fractions {{p/q}} and {{r/s}} in their lowest term is the number
+{{(p+r)/(q+s)}}.
+
+<enscript highlight="scheme">
+> (mediant 1/2 5/6)
+3/4
+</enscript>
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Mediant_(mathematics)|Mediant]]
+
+===== The Quadratic Equation
+
+<procedure>(quadratic-solutions a b c) -> (list-of number)</procedure>
+  a : number
+  b : number
+  c : number
+
+Returns a list of all real solutions to the equation a {{x^2 + bx + c = 0}}
+with real coefficients.
+
+<enscript highlight="scheme">
+> (quadratic-solutions 1 0 -1)
+'(-1 1)
+> (quadratic-solutions 1 2 1)
+'(-1)
+> (quadratic-solutions 1 0 1)
+'()
+</enscript>
+
+<procedure>(quadratic-integer-solutions a b c) -> (list-of integer)</procedure>
+
+; a : number
+; b : number
+; c : number
+
+Returns a list of all integer solutions to the equation a {{x^2 + bx + c = 0}}
+with real coefficients.
+
+<enscript highlight="scheme">
+> (quadratic-integer-solutions 1 0 -1)
+'(-1 1)
+> (quadratic-integer-solutions 1 0 -2)
+'()
+</enscript>
+
+<procedure>(quadratic-natural-solutions a b c) -> (list-of integer)</procedure>
+
+; a : number
+; b : number
+; c : number
+
+Returns a list of all natural solutions to the equation a {{x^2 + bx + c = 0}}
+with real coefficients.
+
+<enscript highlight="scheme">
+> (quadratic-natural-solutions 1 0 -1)
+'(1)
+> (quadratic-natural-solutions 1 0 -2)
+'()
+</enscript>
+
+<procedure>(complex-quadratic-solutions a b c) -> (list-of number)</procedure>
+
+; a : number
+; b : number
+; c : number
+
+Returns a list of all complex solutions to the equation a {{x^2 + bx + c = 0}}.
+This function allows complex coeffecients.
+
+<enscript highlight="scheme">
+> (complex-quadratic-solutions 1 0 1)
+(0-1i 0+1i)
+> (complex-quadratic-solutions 1 0 (sqrt -1))
+(-0.7071067811865476+0.7071067811865475i 0.7071067811865476-0.7071067811865475i)
+> (complex-quadratic-solutions 1 0 1)
+(0-1i 0+1i)
+</enscript>
+
+===== The group Zn and Primitive Roots
+
+The numbers 0, 1, ..., n-1 with addition and multiplication modulo {{n}} is a ring
+called {{Zn}}.
+
+The group of units in {{Zn}} with respect to multiplication modulo {{n}} is
+called {{Un}}.
+
+The order of an element {{x}} in {{Un}} is the least {{k>0}} such that {{x^k=1 mod n}}.
+
+A generator the group {{Un}} is called a primitive root modulo {{n}}. Note that {{g}} is a
+primitive root if and only if {{order(g)=totient(n)}}. A group with a generator is
+called cyclic.
+
+Wikipedia: [[https://en.wikipedia.org/wiki/Multiplicative_group_of_integers_modulo_n|The Group Zn]]
+
+<procedure>(unit-group n) -> (list-of integer)</procedure>
+
+; n : integer
+
+Returns a list of all elements of {{Un}}, the unit group modulo {{n}}. The
+modulus {{n}} must be positive.
+
+<enscript highlight="scheme">
+> (unit-group 5)
+(1 2 3 4)
+> (unit-group 6)
+(1 5)
+</enscript>
+
+<procedure>(unit-group-order x n) -> integer</procedure>
+
+; x : integer
+; n : integer
+
+Returns the order of {{x}} in the group {{Un}}; both arguments must be
+positive. If {{x}} and n are not coprime, {{(unit-group-order x n)}} raises an
+error.
+
+<enscript highlight="scheme">
+> (unit-group-order 2 5)
+4
+> (unit-group-order 2 6)
+Error: (unit-group-order) expected coprime arguments; given 2 and 6
+</enscript>
+
+<procedure>(unit-group-orders n) -> (list-of positive-integer)</procedure>
+
+; n : integer
+
+Returns a list {{(list (unit-group-order x0 n) (unit-group-order x1 n) ...)}}
+where {{x0}}, {{x1}}, {{...}} are the elements of {{Un}}. The modulus {{n}}
+must be positive.
+
+<enscript highlight="scheme">
+> (unit-group-orders 5)
+(1 4 4 2)
+> (map (cut unit-group-order <> 5) (unit-group 5))
+(1 4 4 2)
+</enscript>
+
+<procedure>(primitive-root? x n) -> boolean</procedure>
+
+; x : integer
+; n : integer
+
+Returns {{#t}} if the element {{x}} in {{Un}} is a primitive root modulo {{n}},
+otherwise {{#f}} is returned. An error is signaled if {{x}} is not a member of
+{{Un}}. Both arguments must be positive.
+
+<enscript highlight="scheme">
+> (primitive-root? 1 5)
+#f
+> (primitive-root? 2 5)
+#t
+> (primitive-root? 5 5)
+Error: (primitive-root?) expected coprime arguments; given 5 and 5
+</enscript>
+
+<procedure>(exists-primitive-root? n) -> boolean</procedure>
+
+; n : integer
+
+Returns {{#t}} if the group {{Un}} has a primitive root (i.e. it is cyclic),
+otherwise {{#f}} is returned. In other words, {{#t}} is returned if {{n}} is
+one of {{1}}, {{2}}, {{4}}, {{p^e}}, {{2*p^e}} where {{p}} is an odd prime, and
+{{#f}} otherwise. The modulus {{n}} must be positive.
+
+<enscript highlight="scheme">
+> (exists-primitive-root? 5)
+#t
+> (exists-primitive-root? 6)
+#t
+> (exists-primitive-root? 12)
+#f
+</enscript>
+
+<procedure>(primitive-root n) -> (or integer false)</procedure>
+
+Returns a primitive root of {{Un}} if one exists, otherwise {{#f}} is returned.
+The modulus {{n}} must be positive.
+
+<enscript highlight="scheme">
+> (primitive-root 5)
+2
+> (primitive-root 6)
+5
+</enscript>
+
+<procedure>(primitive-roots n) -> (list-of integer)</procedure>
+
+; n : integer
+
+Returns a list of all primitive roots of {Un}. The modulus {{n}} must be positive.
+
+<enscript highlight="scheme">
+> (primitive-roots 3)
+(2)
+> (primitive-roots 5)
+(2 3)
+> (primitive-roots 6)
+(5)
+</enscript>
+
+=== Original documentation
+
+[[https://docs.racket-lang.org/math/]]
+
+=== Development status
+
+This egg is still largely under active development, with the exception of the
+{{math.number-theory}} module, which is finished and ready for use.
+
+
+=== Implementation caveats
+
+* It's possible some undefined behavior may occur with arguments of the wrong
+  type, since a good amount of the original functions were originally defined
+  in typed racket, which AFAIK would catch those and throw an exception.
+
+* In some places the original implementation references {{unsafe-}} {{fx}} and
+  {{fl}} operators, but these are actually just aliased to safe operators. This
+  implementation just uses chicken's {{chicken.fixnum}} module, which is
+  unsafe. This may also lead to undefined behavior in some cases.
+
+=== Author
+
+Neil Toronto and Jens Axel Søgaard for Racket
+
+=== Maintainer
+
+[[/users/diego-mundo|Diego A. Mundo]]
+
+=== Repository
+
+[[https://github.com/dieggsy/chicken-math]]
+
+=== License
+
+GPL-3.0
+
+=== Version History
