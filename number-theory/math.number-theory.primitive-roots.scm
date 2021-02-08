@@ -9,7 +9,6 @@
   (import scheme
           chicken.type
           (only chicken.base include error add1)
-          (only chicken.format format)
           (only srfi-1 list-tabulate first filter)
           (only math.number-theory.divisibility coprime?)
           (only math.number-theory.modular-arithmetic
@@ -46,7 +45,7 @@
     (cond [(<= g 0) (error 'unit-group-order "bad argument type - not a positive integer" g)]
           [(<= n 0) (error 'unit-group-order "bad argument type - not a positive integer" n)]
           [(not (coprime? g n))
-           (error 'unit-group-order (format "expected coprime arguments; given ~A and ~A" g n))]
+           (error 'unit-group-order "expected coprime arguments" g n)]
           [else
            (with-modulus n
                          (let loop ([k 1]
@@ -91,7 +90,7 @@
     (cond [(<= g 0)  (error 'primitive-root? "bad argument type - not a positive integer" g)]
           [(<= n 0)  (error 'primitive-root? "bad argument type - not a positive integer" n)]
           [(not (coprime? g n))
-           (error 'primitive-root? (format "expected coprime arguments; given ~A and ~A") g n)]
+           (error 'primitive-root? "expected coprime arguments" g n)]
           [else
            (let ((phi-n (totient n)))
              (with-modulus n
