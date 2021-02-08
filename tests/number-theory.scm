@@ -1,8 +1,7 @@
-(import srfi-1)
-
 (test-group "math.number-theory"
 
-  (import math.number-theory)
+  (import math.number-theory
+          srfi-1)
 
   (test-group "math.private.quadratic"
     (test '(-2 2)      (complex-quadratic-solutions 1 0 -4))

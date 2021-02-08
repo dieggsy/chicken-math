@@ -5,3 +5,4 @@
 *.link
 *.so
 *.static.o
+salmonella.log

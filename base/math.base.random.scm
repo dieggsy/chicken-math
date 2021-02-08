@@ -6,10 +6,8 @@
           chicken.base
           chicken.bitwise
           chicken.fixnum
-          chicken.random)
-
-  ;;; SHIM
-  (define random pseudo-random-integer)
+          chicken.random
+          math.racket-shim)
 
   ;; Random bits are taken in blocks of this size:
   (define block-bits 29)

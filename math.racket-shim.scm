@@ -1,8 +1,12 @@
 (module math.racket-shim *
   (import scheme
+          chicken.flonum
+          chicken.foreign
           (only chicken.base conjoin complement exact-integer?
-                case-lambda error unless sub1)
+                case-lambda error unless sub1 flonum?)
           r6rs.bytevectors
+          chicken.fixnum
+          chicken.random
           (only chicken.bitwise arithmetic-shift bitwise-and)
           (only miscmacros ensure)
           (only chicken.platform machine-byte-order))
@@ -212,4 +216,38 @@
                  (arithmetic-shift n (- start))))
 
   (define (fp->fx flonum)
-    (inexact->exact (truncate flonum))))
+    (inexact->exact (truncate flonum)))
+
+  (define (sgn x)
+    (unless (real? x) (error 'sgn "not a real number:" x))
+    (cond [(= 0 x) x]  ; preserve 0, 0.0 and 0.0f0
+          [(flonum? x) (cond [(fp> x 0.0) 1.0]
+                             [(fp< x 0.0) -1.0]
+                             [else        +nan.0])]
+          [else               (if (> x 0) 1 -1)]))
+
+  (define (bitwise-first-bit-set b)
+    (if (zero? b)
+        -1
+        (let loop ([b b] [pos 0])
+          (if (zero? (bitwise-and b 1))
+              (loop (arithmetic-shift b -1) (fx+ pos 1))
+              pos))))
+
+  (define fp exact->inexact)
+
+  (foreign-declare "#include <math.h>")
+
+  (define pi (foreign-value "M_PI" double))
+
+  (define epsilon.0 flonum-epsilon)
+  (define (exact-floor x) (inexact->exact (floor x)))
+  (define fp->exact-integer inexact->exact)
+  (define fp->fx inexact->exact)
+
+  (define random
+    (case-lambda
+      (()
+       (pseudo-random-real))
+      ((k)
+       (pseudo-random-integer k)))))

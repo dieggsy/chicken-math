@@ -13,15 +13,10 @@
           (only chicken.base let*-values)
           (only chicken.foreign foreign-declare foreign-value)
           math.flonum.constants
-          math.flonum.bits)
+          math.flonum.bits
+          math.racket-shim)
 
   (reexport chicken.flonum)
-
-  (foreign-declare "#include <math.h>")
-
-  (define pi (foreign-value "M_PI" double))
-
-  (define fp exact->inexact)
 
   (: fpsubnormal? (float -> boolean))
   (define (fpsubnormal? x)
