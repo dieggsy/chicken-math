@@ -250,4 +250,11 @@
       (()
        (pseudo-random-real))
       ((k)
-       (pseudo-random-integer k)))))
+       (pseudo-random-integer k))))
+
+  (define append*
+    (case-lambda [(ls) (apply append ls)] ; optimize common case
+                 [(l1 l2) (apply append l1 l2)]
+                 [(l1 l2 l3) (apply append l1 l2 l3)]
+                 [(l1 l2 l3 l4) (apply append l1 l2 l3 l4)]
+                 [(l . lss) (apply apply append l lss)])))
