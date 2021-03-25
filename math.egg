@@ -53,7 +53,7 @@
                                      math.flonum.polyfun
                                      math.flonum.fpvector
                                      math.flonum.search
-                                     math.flonum.exansion.base
+                                     math.flonum.expansion.base
                                      math.flonum.expansion.exp-reduction
                                      math.flonum.expansion.exp
                                      math.flonum.expansion.log))
