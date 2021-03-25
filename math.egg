@@ -39,7 +39,24 @@
   (extension math.flonum
              (types-file)
              (source "flonum/math.flonum.scm")
-             (component-dependencies ))
+             (component-dependencies math.flonum.utils
+                                     math.flonum.bits
+                                     math.flonum.brent-dekker
+                                     math.flonum.constants
+                                     math.flonum.error
+                                     math.flonum.exp
+                                     math.flonum.factorial
+                                     math.flonum.functions
+                                     math.flonum.log1pmx
+                                     math.flonum.log
+                                     math.flonum.more-functions
+                                     math.flonum.polyfun
+                                     math.flonum.fpvector
+                                     math.flonum.search
+                                     math.flonum.exansion.base
+                                     math.flonum.expansion.exp-reduction
+                                     math.flonum.expansion.exp
+                                     math.flonum.expansion.log))
   (extension math.flonum.utils
              (types-file)
              (source "flonum/math.flonum.utils.scm"))

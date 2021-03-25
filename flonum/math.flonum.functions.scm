@@ -4,8 +4,7 @@
                                fpulp-error
                                fpeven? fpodd? fpsgn fphypot fplog/base
                                fpprobability?
-                               ;; fpsinpix fpcospix fptanpix fpcscpix fpsecpix fpcotpix
-                               )
+                               fpsinpix fpcospix fptanpix fpcscpix fpsecpix fpcotpix)
   (import scheme
           chicken.type
           chicken.flonum
