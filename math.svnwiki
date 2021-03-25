@@ -178,7 +178,7 @@ error in ulps; see {{fpulp}} and {{fpulp-error}}.
 
 ==== (math number-theory)
 
-Number-theoretic functions.
+Number-theoretic functions
 
 ===== Congruences and modular arithmetic
 <procedure>(divides? m n) -> boolean</procedure>
