@@ -8,7 +8,7 @@
           chicken.fixnum
           chicken.random
           (only chicken.bitwise arithmetic-shift bitwise-and)
-          (only miscmacros ensure)
+          (only miscmacros ensure define-syntax-rule)
           (only chicken.platform machine-byte-order))
 
   (define natural? (conjoin (complement negative?) exact-integer?))
@@ -257,4 +257,7 @@
                  [(l1 l2) (apply append l1 l2)]
                  [(l1 l2 l3) (apply append l1 l2 l3)]
                  [(l1 l2 l3 l4) (apply append l1 l2 l3 l4)]
-                 [(l . lss) (apply apply append l lss)])))
+                 [(l . lss) (apply apply append l lss)]))
+
+  (define-syntax-rule (λ a ...)
+    (lambda a ...)))
