@@ -9,7 +9,176 @@ math is a chicken port of racket's math library.
 The following documentation is largely taken directly from the racket
 documentation, but tweaked for the CHICKEN implementation.
 
-==== math.number-theory
+=== Modules
+
+==== (math base)
+
+Constants and elementary functions
+
+===== Constants
+
+<constant>phi.0</constant>
+
+An approximation of φ, the [[https://en.wikipedia.org/wiki/Golden_ratio|golden ratio]].
+
+<enscript highlight="scheme">
+> phi.0
+1.618033988749895
+</enscript>
+
+<constant>euler.0</constant>
+
+An approximation of ''e'', or [[https://en.wikipedia.org/wiki/E_(mathematical_constant)|Euler's number]].
+
+<enscript highlight="scheme">
+> euler.0
+2.718281828459045
+> (exp 1)
+2.718281828459045
+</enscript>
+
+<constant>catalan.0</constant>
+
+An approximation of ''G'', or [[|Catalan's constant]].
+
+<enscript highlight="scheme">
+> catalan.0
+0.915965594177219
+</enscript>
+
+===== Functions
+
+<procedure>(float-complex? v) -> boolean</procedure>
+
+; v : any
+
+Returns {{#t}} when {{v}} is an inexact complex number. Analogous to
+[[https://wiki.call-cc.org/man/5/Module%20(chicken%20base)#flonum|flonum?]]
+
+<procedure>(number->float-complex x) -> cplxnum</procedure>
+
+; x : number
+
+Returns a new complex number with a flonum real part and a flonum imaginary
+part. Analogous to {{exact->inexact}}.
+
+<procedure>(power-of-two? x) -> boolean</procedure>
+
+; x : number
+
+Returns {{#t}} when {{x}} is an integer power of 2.
+
+Examples:
+<enscript highlight="scheme">
+> (power-of-two? 1.0)
+#t
+> (power-of-two? 1/2)
+#t
+> (power-of-two? (flnext 2.0))
+#f
+</enscript>
+
+<procedure>(asinh z) -> number</procedure>
+<procedure>(acosh z) -> number</procedure>
+<procedure>(atanh z) -> number</procedure>
+
+; z : number
+
+The inverses of {{sinh}}, {{cosh}}, and {{tanh}}.
+
+<procedure>(sum xs) -> number</procedure>
+
+; xs : (list-of number)
+
+Like {{(apply + xs)}}, but incurs rounding error only once when adding inexact
+numbers. (In fact, the inexact numbers in {{xs}} are summed separately using
+{{fpsum}}).
+
+===== Random Number Generation
+
+<procedure>(random-natural k) -> integer</procedure>
+
+; k : integer
+
+Returns a random natural number less than {{k}}, which must be positive.
+
+<procedure>(random-integer a b) -> integer</procedure>
+
+; a : integer
+; b : integer
+
+Returns a random integer n such that {{(<= a n)}} and {{(< n b)}}.
+
+<procedure>(random-bits num)</procedure>
+
+; num : integer
+
+Returns a random natural smaller than {{(expt 2 num)}}; {{num}} must be
+positive. For powers of two, this is faster than using {{random-natural}},
+which is implemented in terms of {{random-bits}}, using biased rejection
+sampling.
+
+===== Measuring error
+
+<procedure>(absolute-error x r) -> number</procedure>
+
+; x : number
+; r : number
+
+Usually computes {{(abs (- x r))}} using exact rationals, but handles
+non-rational reals such as {{+inf.0}} specially.
+
+Examples:
+<enscript highlight="scheme">
+> (absolute-error 1/2 1/2)
+0
+> (absolute-error 0.14285714285714285 1/7)
+7.93016446160826e-18
+> (absolute-error +inf.0 +inf.0)
+0.0
+> (absolute-error +inf.0 +nan.0)
++inf.0
+> (absolute-error 1e-20 0.0)
+1e-20
+> (absolute-error (- 1.0 (fl 4999999/5000000)) 1/5000000)
+5.751132903242251e-18
+</enscript>
+
+<procedure>(relative-error x r) -> number</procedure>
+
+; x : number
+; r : number
+
+Measures how close an approximation {{x}} is to the correct value {{r}},
+relative to the magnitude of {{r}}.
+
+This function usually computes {{(abs (/ (- x r) r))}} using exact rationals, but
+handles non-rational reals such as {{+inf.0}} specially, as well as {{r = 0}}.
+
+<enscript highlight="scheme">
+> (relative-error 1/2 1/2)
+0
+> (relative-error 0.14285714285714285 1/7)
+5.551115123125783e-17
+> (relative-error +inf.0 +inf.0)
+0.0
+> (relative-error +inf.0 +nan.0)
++inf.0
+> (relative-error 1e-20 0.0)
++inf.0
+> (relative-error (- 1.0 (fl 4999999/5000000)) 1/5000000)
+2.8755664516211255e-11
+</enscript>
+
+In the last two examples, relative error is high because the result is near
+zero. (Compare the same examples with {{absolute-error}}.) Because flonums are
+particularly dense near zero, this makes relative error better than absolute
+error for measuring the error in a flonum approximation. An even better one is
+error in ulps; see {{fpulp}} and {{fpulp-error}}.
+
+==== (math number-theory)
+
+Number-theoretic functions.
 
 ===== Congruences and modular arithmetic
 <procedure>(divides? m n) -> boolean</procedure>
@@ -1334,3 +1503,10 @@ Neil Toronto and Jens Axel Søgaard for Racket
 GPL-3.0
 
 === Version History
+
+; 0.3.0 : Finish (math base) and (math flonum), bug and typo fixes, credit original authors
+; 0.2.3 : Fix broken .egg file
+; 0.2.2 : Re-organize internals, add (math base constants)
+; 0.2.1 : Minor bug fixes
+; 0.2.0 : Update (math number-theory quadratic) to reflect upstream
+; 0.1.0 : Initial release
