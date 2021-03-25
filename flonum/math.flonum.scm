@@ -1,4 +1,4 @@
-(module math.flonum ()
+(module math.flonum (lg* lg/ lgprod)
   (import scheme
           chicken.module)
   (import math.flonum.bits
@@ -34,5 +34,5 @@
             math.flonum.fpvector)
 
   (define lg* fp+)
-  (define lp/ fp-)
+  (define lg/ fp-)
   (define lgprod fpsum))
