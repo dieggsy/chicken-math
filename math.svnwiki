@@ -4,16 +4,37 @@
 
 === Introduction
 
-math is a chicken port of racket's math library.
+math is a CHICKEN port of racket's [[https://docs.racket-lang.org/math/|math]]
+library.
 
-The following documentation is largely taken directly from the racket
-documentation, but tweaked for the CHICKEN implementation.
+The following documentation is largely a direct copy of the racket
+documentation, re-formatted for svnwiki and tweaked for the CHICKEN
+implementation.
+
+=== Development status
+
+This egg is still largely under active development. There may be missing
+modules and features.
+
+=== Implementation caveats
+
+* It's possible some undefined behavior may occur with arguments of the wrong
+  type, since a good amount of the original functions were originally defined
+  in typed racket, which AFAIK would catch those and throw an exception.
+
+* In some places the original implementation references {{unsafe-}} {{fx}} and
+  {{fl}} operators, but these are actually just aliased to safe operators. This
+  implementation just uses CHICKEN's {{chicken.fixnum}} module, which is
+  unsafe. This may also lead to undefined behavior in some cases.
 
 === Modules
 
 ==== (math base)
 
 Constants and elementary functions
+
+'''Note:''' This is currently missing procedures from {{racket/math}} that the
+original racket library re-exports.
 
 ===== Constants
 
@@ -39,7 +60,7 @@ An approximation of ''e'', or [[https://en.wikipedia.org/wiki/E_(mathematical_co
 
 <constant>catalan.0</constant>
 
-An approximation of ''G'', or [[|Catalan's constant]].
+An approximation of ''G'', or [[https://en.wikipedia.org/wiki/Catalan's_constant|Catalan's constant]].
 
 <enscript highlight="scheme">
 > catalan.0
@@ -53,7 +74,7 @@ An approximation of ''G'', or [[|Catalan's constant]].
 ; v : any
 
 Returns {{#t}} when {{v}} is an inexact complex number. Analogous to
-[[https://wiki.call-cc.org/man/5/Module%20(chicken%20base)#flonum|flonum?]]
+{{flonum?}}.
 
 <procedure>(number->float-complex x) -> cplxnum</procedure>
 
@@ -74,7 +95,7 @@ Examples:
 #t
 > (power-of-two? 1/2)
 #t
-> (power-of-two? (flnext 2.0))
+> (power-of-two? (fpnext 2.0))
 #f
 </enscript>
 
@@ -118,7 +139,7 @@ positive. For powers of two, this is faster than using {{random-natural}},
 which is implemented in terms of {{random-bits}}, using biased rejection
 sampling.
 
-===== Measuring error
+===== Measuring Error
 
 <procedure>(absolute-error x r) -> number</procedure>
 
@@ -140,7 +161,7 @@ Examples:
 +inf.0
 > (absolute-error 1e-20 0.0)
 1e-20
-> (absolute-error (- 1.0 (fl 4999999/5000000)) 1/5000000)
+> (absolute-error (- 1.0 (fp 4999999/5000000)) 1/5000000)
 5.751132903242251e-18
 </enscript>
 
@@ -166,7 +187,7 @@ handles non-rational reals such as {{+inf.0}} specially, as well as {{r = 0}}.
 +inf.0
 > (relative-error 1e-20 0.0)
 +inf.0
-> (relative-error (- 1.0 (fl 4999999/5000000)) 1/5000000)
+> (relative-error (- 1.0 (fp 4999999/5000000)) 1/5000000)
 2.8755664516211255e-11
 </enscript>
 
@@ -175,6 +196,1149 @@ zero. (Compare the same examples with {{absolute-error}}.) Because flonums are
 particularly dense near zero, this makes relative error better than absolute
 error for measuring the error in a flonum approximation. An even better one is
 error in ulps; see {{fpulp}} and {{fpulp-error}}.
+
+==== (math flonum)
+
+Flonum functions, including high-accuracy support
+
+'''Note:''' This library uses the {{fp}} prefix rather than the original
+library's {{fl}} prefix for consistency with {{(chicken flonum)}}.
+
+'''Note:''' This is currently missing procedures from {{racket/flonum}} that
+the original racket library re-exports.
+
+'''Note:''' Currently, this module is not very well tested.
+
+===== Additional Flonum Fnuctions
+
+<procedure>(fp x) -> flonum</procedure>
+
+; x : number
+
+Equivalent to {{exact->inexact}}, but much easier to read and write.
+
+Examples:
+<enscript highlight="scheme">
+> (fp 1/2)
+0.5
+> (fp 0.5)
+0.5
+> (fp #i0.5)
+0.5
+</enscript>
+
+<procedure>(fpsgn x) -> flonum</procedure>
+<procedure>(fpeven? x) -> flonum</procedure>
+<procedure>(fpodd? x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{sgn}}, {{even?}}, and {{odd?}}, but restricted to flonum input.
+
+Examples:
+
+<enscript highlight="scheme">
+> (map fpsgn '(-2.0 -0.0 0.0 2.0))
+'(-1.0 0.0 0.0 1.0)
+> (map fpeven? '(2.0 1.0 0.5))
+'(#t #f #f)
+> (map fpodd? '(2.0 1.0 0.5))
+'(#f #t #f)
+</enscript>
+
+<procedure>(fprational? x) -> boolean</procedure>
+<procedure>(fpinfinite? x) -> boolean</procedure>
+<procedure>(fpnan? x) -> boolean</procedure>
+<procedure>(fpinteger? x) -> boolean</procedure>
+
+; x : flonum
+
+Like {{rational?}}, {{infinite?}}, {{nan?}}, and {{integer?}}, but restricted
+to flonum input.
+
+<procedure>(fphypot x y) -> flonum</procedure>
+
+; x : flonum
+; y : flonum
+
+Computes {{(fpsqrt (+ (* x x) (* y y)))}} in way that overflows only when the
+answer is too large.
+
+Examples:
+<enscript highlight="scheme">
+> (fpsqrt (+ (* 1e+200 1e+200) (* 1e+199 1e+199)))
++inf.0
+> (fphypot 1e+200 1e+199)
+1.0049875621120889e+200
+</enscript>
+
+<procedure>(fpsum xs) -> flonum</procedure>
+
+; xs : (list-of flonum)
+
+Like {{(apply + xs)}}, but incurs rounding error only once.
+
+Examples:
+<enscript highlight="scheme">
+> (+ 1.0 1e-16)
+1.0
+> (+ (+ 1.0 1e-16) 1e-16)
+1.0
+> (fpsum '(1.0 1e-16 1e-16))
+1.0000000000000002
+</enscript>
+
+The sum function does the same for heterogenous lists of reals.
+
+Worst-case time complexity is O(''n''^2), though the pathological inputs needed
+to observe quadratic time are exponentially improbable and are hard to generate
+purposely. Expected time complexity is O(''n'' log(''n'')).
+
+See {{fpvector-sums}} for a variant that computes all the partial sums in
+{{xs}}.
+
+<procedure>(fpsinh x) -> flonum</procedure>
+<procedure>(fpcosh x) -> flonum</procedure>
+<procedure>(fptanh x) -> flonum</procedure>
+
+; x : flonum
+
+Return the [[https://en.wikipedia.org/wiki/Hyperbolic_function|hyperbolic sine,
+cosine, and tangent]] of {{x}}, respectively.
+
+Maximum observed error is 2 ulps (see {{fpulp}}), making these functions
+(currently) much more accurate than their {{(math base)}} counterparts
+('''Note:''' currently missing). They also return sensible values on the
+largest possible domain.
+
+<procedure>(fpsinh x) -> flonum</procedure>
+<procedure>(fpcosh x) -> flonum</procedure>
+<procedure>(fptanh x) -> flonum</procedure>
+
+; x : flonum
+
+Return the [[https://en.wikipedia.org/wiki/Inverse_hyperbolic_function|inverse
+hyperbolic sine, cosine, and tangent]] of {{y}}, respectively.
+
+These functions are as robust and accurate as their corresponding inverses.
+
+<procedure>(fpfactorial n) -> flonum</procedure>
+<procedure>(fpbinomial n k) -> flonum</procedure>
+<procedure>(fppermutations n k) -> flonum</procedure>
+<procedure>(fpmultinomial n ks) -> flonum</procedure>
+
+; n : flonum
+; k : flonum
+; ks : (list-of flonum)
+
+Like {{(fp (factorial (fp->exact-integer n)))}} and so on, but computed in
+constant time. Also, these return {{+nan.0}} instead of raising exceptions.
+
+For factorial-like functions that return sensible values for non-integers, see
+{{log-gamma}} and {{log-beta}} ('''Note:''' currently missing).
+
+<procedure>(fplog1p x) -> flonum</procedure>
+<procedure>(fpexpm1 x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(fplog (+ 1.0 x))}} and {{(- (fpexp x) 1.0)}}, but accurate when {{x}}
+is small (within 1 ulp - see {{fpulp}}).
+
+For example, one difficult input for {{(fplog (+ 1.0 x))}} and {{(- (fpexp x) 1.0)}} is
+{{x = 1e-14}}, which {{fplog1p}} and {{fpexpm1}} compute correctly:
+
+<enscript highlight="scheme">
+> (fplog (+ 1.0 1e-14))
+9.992007221626358e-15
+> (fplog1p 1e-14)
+9.99999999999995e-15
+> (- (fpexp 1e-14) 1.0)
+9.992007221626409e-15
+> (fpexpm1 1e-14)
+1.0000000000000049e-14
+</enscript>
+
+These functions are mutual inverses:
+
+[[image:https://docs.racket-lang.org/math/pict_2.png]]
+
+Notice that both graphs pass through the origin. Thus, inputs close to 0.0,
+around which flonums are particularly dense, result in outputs that are also
+close to 0.0. Further, both functions are approximately the identity function
+near 0.0, so the output density is approximately the same.
+
+Many flonum functions defined in terms of {{fplog}} and {{fpexp}} become much
+more accurate when their defining expressions are put in terms of {{fplog1p}}
+and {{fpexpm1}}. The functions exported by this module and by
+math/special-functions use them extensively.
+
+One notorious culprit is {{(fpexpt (- 1.0 x) y)}}, when {{x}} is near 0.0.
+Computing it directly too often results in the wrong answer:
+
+<enscript highlight="scheme">
+> (fpexpt (- 1.0 1e-20) 1e+20)
+1.0
+</enscript>
+
+We should expect that multiplying a number just less than 1.0 by itself that
+many times would result in something less than 1.0. The problem comes from
+subtracting such a small number from 1.0 in the first place:
+
+<enscript highlight="scheme">
+> (- 1.0 1e-20)
+1.0
+</enscript>
+
+Fortunately, we can compute this correctly by putting the expression in terms
+of {{fplog1p}}, which avoids the error-prone subtraction:
+
+<enscript highlight="scheme">
+> (fpexp (* 1e+20 (fplog1p (- 1e-20))))
+0.36787944117144233
+</enscript>
+
+See {{fpexpt1p}}, which is more accurate still.
+
+<procedure>(fpexpt1p x y) -> flonum</procedure>
+
+; x : flonum
+; y : flonum
+
+Like {{(fpexpt (+ 1.0 x) y)}}, but accurate for any {{x}} and {{y}}.
+
+<procedure>(fpexpt+ x1 x2 y) -> flonum</procedure>
+
+; x1 : flonum
+; x2 : flonum
+; y : flonum
+
+Like {{(fpexpt (+ x1 x2) y)}}, but more accurate.
+
+<procedure>(fpexp2 x) -> flonum</procedure>
+
+; x : flonum
+
+Equivalent to {{fpexpt 2.0 x}}, but faster when {{x}} is an integer.
+
+<procedure>(fplog2 x) -> flonum</procedure>
+
+; x : flonum
+
+Computes the base-2 log of {{x}} more accurately than {{(/ (fplog x) (fplog
+2.0))}}. In particular, {{(fplog2 x)}} is correct for any power of two {{x}}.
+
+Examples:
+<enscript highlight="scheme">
+> (fplog2 4.5)
+2.169925001442312
+> (/ (fplog (fpexp2 -1066.0)) (fplog 2.0))
+-1066.0000000000002
+> (fplog2 (fpexp2 -1066.0))
+-1066.0
+</enscript>
+
+Maximum observed error is 0.5006 ulps (see {{fpulp}}), but is almost always no
+more than 0.5 (i.e. it is almost always correct).
+
+<procedure>(fplogb b x) -> flonum</procedure>
+
+; b : flonum
+; x : flonum
+
+Computes the base-b log of {{x}} more accurately than {{(/ (fplog x) (fplog
+b))}}, and handles limit values correctly.
+
+Maximum observed error is 2.1 ulps (see {{fpulp}}), but is usually less than
+0.7 (i.e. near rounding error).
+
+Except possibly at limit values (such as 0.0 and {{+inf.0}}, and {{b = 1.0}})
+and except when the inner expression underflows or overflows, {{fplogb}}
+approximately meets these identities for {{b > 0.0}}:
+
+* Left inverse: {{(fplogb b (fpexpt b y)) = y}}
+* Right inverse: {{(fpexpt b (fplogb b x)) = x}} when {{x > 0.0}}
+
+Unlike with {{fpexpt}}, there is no standard for {{fplogb}}’s behavior at limit
+values. Fortunately, deriving the following rules (applied in order) is not
+prohibitively difficult.
+
+<table>
+<tr> <th>Case                            </th> <th style="text-align:center">Condition      </th> <th style="text-align:right">Value     </th> </tr>
+<tr> <td>{{(fplogb b 1.0)}}              </td> <td align="center">                          </td> <td align="right">{{0.0}}   </td> </tr>
+<tr> <td>{{(fplogb 1.0 x)}}              </td> <td align="center">                          </td> <td align="right">{{+nan.0}}</td> </tr>
+<tr> <td>{{(fplogb b x)}}                </td> <td align="center">{{b < 0.0}} or {{x < 0.0}}</td> <td align="right">{{+nan.0}}</td> </tr>
+<tr> <td>''Double limits''               </td> <td align="center">                          </td> <td align="right">          </td> </tr>
+<tr> <td>{{(fplogb 0.0 0.0)}}            </td> <td align="center">                          </td> <td align="right">{{+inf.0}}</td> </tr>
+<tr> <td>{{(fplogb 0.0 +inf.0)}}         </td> <td align="center">                          </td> <td align="right">{{-inf.0}}</td> </tr>
+<tr> <td>{{(fplogb +inf 0.0)}}           </td> <td align="center">                          </td> <td align="right">{{-inf.0}}</td> </tr>
+<tr> <td>{{(fplogb +inf +inf.0)}}        </td> <td align="center">                          </td> <td align="right">{{+inf.0}}</td> </tr>
+<tr> <td>''Limits with respect to {{b}}''</td> <td align="center">                          </td> <td align="right">          </td> </tr>
+<tr> <td>{{(fplogb 0.0 x)}}              </td> <td align="center">{{x < 1.0}}               </td> <td align="right">{{0.0}}   </td> </tr>
+<tr> <td>{{(fplogb 0.0 x)}}              </td> <td align="center">{{x > 1.0}}               </td> <td align="right">{{-0.0}}  </td> </tr>
+<tr> <td>{{(fplogb +inf.0 x)}}           </td> <td align="center">{{x > 1.0}}               </td> <td align="right">{{0.0}}   </td> </tr>
+<tr> <td>{{(fplogb +inf.0 x)}}           </td> <td align="center">{{x < 1.0}}               </td> <td align="right">{{-0.0}}  </td> </tr>
+<tr> <td>''Limits with respect to {{x}}''</td> <td align="center">                          </td> <td align="right">          </td> </tr>
+<tr> <td>{{(fplogb b 0.0)}}              </td> <td align="center">{{x < 1.0}}               </td> <td align="right">{{+inf.0}}</td> </tr>
+<tr> <td>{{(fplogb b 0.0)}}              </td> <td align="center">{{x > 1.0}}               </td> <td align="right">{{-inf.0}}</td> </tr>
+<tr> <td>{{(fplogb b +inf.0)}}           </td> <td align="center">{{x > 1.0}}               </td> <td align="right">{{+inf.0}}</td> </tr>
+<tr> <td>{{(fplogb b +inf.0)}}           </td> <td align="center">{{x < 1.0}}               </td> <td align="right">{{-inf.0}}</td> </tr>
+</table>
+
+Most of these rules are derived by taking limits of the mathematical base-b log
+function. Except for {{(fplogb 1.0 x)}}, when doing so gives rise to
+ambiguities, they are resolved using {{fpexpt}}’s behavior, which follows the
+IEEE 754 and C99 standards for {{pow}.
+
+For example, consider {{(fplogb 0.0 0.0)}}. Taking an interated limit, we get ∞
+if the outer limit is with respect to {{x}}, or 0 if the outer limit is with
+respect to {{b}}. This would normally mean {{(fplogb 0.0 0.0) = +nan.0}}.
+
+However, choosing {{+inf.0}} ensures that these additional left-inverse and
+right-inverse identities hold:
+
+<enscript highlight="scheme">
+(fplogb 0.0 (fpexpt 0.0 +inf.0)) = +inf.0
+(fpexpt 0.0 (fplogb 0.0 0.0)) = 0.0
+</enscript>
+
+Further, choosing 0.0 does not ensure that any additional identities hold.
+
+<procedure>(fpbracketed-root f a b) -> flonum</procedure>
+
+; f : (flonum -> flonum)
+; a : flonum
+; b : flonum
+
+Uses the [[https://en.wikipedia.org/wiki/Brent%27s_method|Brent-Dekker method]]
+to find a floating-point root of {{f}} (a flonum {{x}} for which {{(f x)}} is very
+near a zero crossing) between {{a}} and {{b}}. The values {{(f a)}} and {{(f
+b)}} must have opposite signs, but a and b may be in any order.
+
+Examples:
+<enscript highlight="scheme">
+> (define (f x) (+ 1.0 (* (+ x 3.0) (sqr (- x 1.0)))))
+> (define x0 (fpbracketed-root f -4.0 2.0))
+> (f (fpprev x0))
+-7.105427357601002e-15
+> (f x0)
+6.661338147750939e-16
+> (fpbracketed-root f -1.0 2.0)
++nan.0
+</enscript>
+
+Caveats:
+
+* There is no guarantee that {{fpbracketed-root}} will find any particular
+  root. Moreover, future updates to its implementation could make it find
+  different ones.
+
+* There is currently no guarantee that it will find the closest {{x}} to an
+  exact root.
+
+* It currently runs for at most 5000 iterations.
+
+It usually requires far fewer iterations, especially if the initial bounds
+{{a}} and {{b}} are tight.
+
+<procedure>(make-fpexpt x) -> (flonum -> flonum)</procedure>
+
+; x : number
+
+Equivalent to {{(λ (y) (fpexpt x y))}} when {{x}} is a flonum, but much more accurate
+for large {{y}} when {{x}} cannot be exactly represented by a flonum.
+
+Suppose we want to compute {{π^y}}, where {{y}} is a flonum. If we use flexpt
+with an approximation of the irrational base {{π}}, the error is low near zero,
+but grows with distance from the origin. Using {{make-fpexpt}}, the error is near
+rounding error everywhere.
+
+<procedure>(fpsqrt1pm1 x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(- (fpsqrt (+ 1.0 x)) 1.0)}}, but accurate when {{x}} is small.
+
+<procedure>(fplog1pmx x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(- (fplog1p x) x)}}, but accurate when {{x}} is small.
+
+<procedure>(fpexpsqr x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(fpexp (* x x))}}, but accurate when {{x}} is large.
+
+<procedure>(fpgauss x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(fpexp (- (* x x)))}}, but accurate when {{x}} is large.
+
+<procedure>(fpexp1p x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(fpexp (+ 1.0 x))}}, but accurate when {{x}} is near a power of 2.
+
+<procedure>(fpsinpix x) -> flonum</procedure>
+<procedure>(fpcospix x) -> flonum</procedure>
+<procedure>(fptanpix x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(fpsin (* pi x))}}, {{(fpcos (* pi x))}} and {{(fptan (* pi x))}}, respectively, but
+accurate near roots and singularities. When {{x = (+ n 0.5)}} for some integer {{n}},
+{{(fptanpix x) = +nan.0}}.
+
+<procedure>(fpcscpix x) -> flonum</procedure>
+<procedure>(fpsecpix x) -> flonum</procedure>
+<procedure>(fpcotpix x) -> flonum</procedure>
+
+; x : flonum
+
+Like {{(/ 1.0 (fpsinpix x))}}, {{(/ 1.0 (fpcospix x))}} and {{(/ 1.0 (fptanpix
+x))}}, respectively, but the first two return {{+nan.0}} at singularities and
+{{fpcotpix}} avoids a double reciprocal.
+
+
+===== Log-Space Arithmetic
+
+It is often useful, especially when working with probabilities and probability
+densities, to represent nonnegative numbers in ''log space'', or as the natural
+logs of their true values. Generally, the reason is that the ''smallest''
+positive flonum is ''too'' large.
+
+For example, say we want the probability density of the standard normal
+distribution (the bell curve) at 50 standard deviations from zero:
+
+('''Note''': {{(math distributions)}} is still un-implemented in CHICKEN, but
+should arrive in a later release)
+
+<enscript highlight="scheme">
+> (import (math distributions))
+> (pdf (normal-dist) 50.0)
+0.0
+</enscript>
+
+Mathematically, the density is nonzero everywhere, but the density at 50 is
+less than {{+min.0}}. However, its density in log space, or its log-density, is
+representable:
+
+<enscript highlight="scheme">
+> (pdf (normal-dist) 50.0 #t)
+-1250.9189385332047
+</enscript>
+
+While this example may seem contrived, it is very common, when computing the
+density of a ''vector'' of data, for the product of the densities to be too
+small to represent directly.
+
+In log space, exponentiation becomes multiplication, multiplication becomes
+addition, and addition becomes tricky. See {{lg+}} and {{lgsum}} for solutions.
+
+<procedure>(lg* logx logy) -> flonum</procedure>
+<procedure>(lg/ logx logy) -> flonum</procedure>
+<procedure>(lgprod logxs) -> flonum</procedure>
+
+; logx : flonum
+; logy : flonum
+; logxs : (list-of flonum)
+
+Equivalent to {{(fp+ logx logy)}}, {{(fp- logx logy)}} and {{(fpsum logxs)}},
+respectively.
+
+<procedure>(lg+ logx logy) -> flonum</procedure>
+<procedure>(lg- logx logy) -> flonum</procedure>
+
+; logx : flonum
+; logy : flonum
+
+Like {{(fplog (+ (fpexp logx) (fpexp logy)))}} and {{(fplog (- (fpexp logx)
+(fpexp logy)))}}, respectively, but more accurate and less prone to overflow
+and underflow.
+
+When {{logy > logx}}, {{lg-}} returns {{+nan.0}}. Both functions correctly
+treat {{-inf.0}} as log-space 0.0.
+
+To add more than two log-space numbers with the same guarantees, use {{lgsum}}.
+
+Examples:
+<enscript highlight="scheme">
+> (lg+ (fplog 0.5) (fplog 0.2))
+-0.35667494393873234
+> (fpexp (lg+ (fplog 0.5) (fplog 0.2)))
+0.7000000000000001
+> (lg- (fplog 0.5) (fplog 0.2))
+-1.203972804325936
+> (fpexp (lg- (fplog 0.5) (fplog 0.2)))
+0.30000000000000004
+> (lg- (fplog 0.2) (fplog 0.5))
++nan.0
+</enscript>
+
+Though more accurate than a naive implementation, both functions are prone to
+catastrophic cancellation (see {{fpulp-error}}) in regions where they output a
+value close to 0.0 (or log-space 1.0). While these outputs have high relative
+error, their absolute error is very low, and when exponentiated, nearly have
+just rounding error. Further, catastrophic cancellation is unavoidable when
+{{logx}} and {{logy}} themselves have error, which is by far the common case.
+
+These are, of course, excuses—but for floating-point research generally. There
+are currently no reasonably fast algorithms for computing {{lg+}} and {{lg-}}
+with low relative error. For now, if you need that kind of accuracy, use
+{{(math bigfloat)}} ('''Note''': still unimplemented in CHICKEN).
+
+<procedure>(lgsum logxs) -> flonum</procedure>
+
+; logxs : flonum
+
+Like folding {{lg+}} over {{logxs}}, but more accurate. Analogous to {{fpsum}}.
+
+<procedure>(lg1+ logx) -> flonum</procedure>
+<procedure>(lg1- logx) -> flonum</procedure>
+
+; logx : flonum
+
+Equivalent to {{(lg+ (fplog 1.0) logx)}} and {{(lg- (fplog 1.0) logx)}},
+respectively, but faster.
+
+<procedure>(fpprobability? x [log?])</procedure>
+
+; x : flonum
+; log? : boolean
+
+When {{log?}} is {{#f}}, returns {{#t}} when {{(<= 0.0 x 1.0)}}. When {{log?}}
+is {{#t}}, returns {{#t}} when {{(<= -inf.0 x 0.0)}}
+
+Examples:
+<enscript highlight="scheme">
+> (fpprobability? -0.1)
+#f
+> (fpprobability? 0.5)
+#t
+> (fpprobability? +nan.0 #t)
+#f
+</enscript>
+
+===== Debugging Flonum Functions
+
+The following functions and constants are useful in authoring and debugging
+flonum functions that must be accurate on the largest possible domain.
+
+====== Measuring Floating-Point Error
+
+<procedure>(fpulp x) -> flonum</procedure>
+
+; x : flonum
+
+Returns {{x}}'s ''ulp'' or '''u'''nit in '''l'''ast '''p'''lace: the magnitude
+of the least significant bit in {{x}}.
+
+Examples:
+<enscript highlight="scheme">
+> (fpulp 1.0)
+2.220446049250313e-16
+> (fpulp 1e-100)
+1.2689709186578246e-116
+> (fpulp 1e+200)
+1.6996415770136547e+184
+</enscript>
+
+<procedure>(fpulp-error x r) -> flonum</procedure>
+
+; x : flonum
+; r : number
+
+Returns the absolute number of ulps difference between {{x}} and {{r}}.
+
+For non-rational arguments such as {{+nan.0}}, {{fpulp-error}} returns 0.0 if
+{{(eqv? x r)}}; otherwise it returns {{+inf.0}}.
+
+A flonum function with maximum error 0.5 ulps exhibits only rounding error; it
+is ''correct''. A flonum function with maximum error no greater than a few ulps
+is ''accurate''. Most moderately complicated flonum functions, when implemented
+directly, seem to have over a hundred thousand ulps maximum error.
+
+Examples:
+<enscript highlight="scheme">
+> (fpulp-error 0.5 1/2)
+0.0
+> (fpulp-error 0.14285714285714285 1/7)
+0.2857142857142857
+> (fpulp-error +inf.0 +inf.0)
+0.0
+> (fpulp-error +inf.0 +nan.0)
++inf.0
+> (fpulp-error 1e-20 0.0)
++inf.0
+> (fpulp-error (- 1.0 (fl 4999999/5000000)) 1/5000000)
+217271.6580864
+</enscript>
+
+he last example subtracts two nearby flonums, the second of which had already
+been rounded, resulting in horrendous error. This is an example of ''catastrophic
+cancellation'. Avoid subtracting nearby flonums whenever possible. [1]
+
+See {{relative-error}} for a similar way to measure approximation error when
+the approximation is not necessarily represented by a flonum.
+
+[1] You can make an exception if the result is to be exponentiated. If {{x}}
+has small {{absolute-error}}, then {{(exp x)}} has small {{relative-error}} and
+small {{fpulp-error}}
+
+====== Flonum Constants
+
+<constant>-max.0</constant>
+<constant>-min.0</constant>
+<constant>+min.0</constant>
+<constant>+max.0</constant>
+
+The nonzero, rational flonums with maximum and minimum magnitude.
+
+Example:
+<enscript highlight="scheme">
+> (list -max.0 -min.0 +min.0 +max.0)
+(-1.7976931348623157e+308 -5e-324 5e-324 1.7976931348623157e+308)
+</enscript>
+
+<constant>epsilon.0</constant>
+
+The smallest flonum that can be added to 1.0 to yield a larger number, or the
+magnitude of the least significant bit in 1.0.
+
+Examples:
+<enscript highlight="scheme">
+> epsilon.0
+2.220446049250313e-16
+> (fpulp 1.0)
+2.220446049250313e-16
+</enscript>
+
+Epsilon is often used in stopping conditions for iterative or additive
+approximation methods. For example, the following function uses it to stop
+Newton’s method to compute square roots. (Please do not assume this example is
+robust.)
+
+<enscript highlight="scheme">
+(define (newton-sqrt x)
+  (let loop ([y  (* 0.5 x)])
+    (define dy (/ (- x (sqr y)) (* 2.0 y)))
+    (if (<= (abs dy) (abs (* 0.5 epsilon.0 y)))
+        (+ y dy)
+        (loop (+ y dy)))))
+</enscript>
+
+When {{(<= (abs dy) (abs (* 0.5 epsilon.0 y)))}}, adding dy to y rarely results
+in a different flonum. The value 0.5 can be changed to allow looser
+approximations. This is a good idea when the approximation does not have to be
+as close as possible (e.g. it is only a starting point for another
+approximation method), or when the computation of dy is known to be inaccurate.
+
+Approximation error is often understood in terms of relative error in epsilons.
+Number of epsilons relative error roughly corresponds with error in ulps,
+except when the approximation is subnormal.
+
+====== Low-Level Flonum Operations
+
+<procedure>(flonum->bit-field x) -> integer</procedure>
+
+; x : flonum
+
+Returns the bits comprising {{x}} as an integer. A convenient shortcut for
+composing {{integer-bytes->integer}} with {{real->floating-point-bytes}}
+('''Note''': neither of these is in CHICKEN).
+
+Examples:
+<enscript highlight="scheme">
+> (number->string (flonum->bit-field -inf.0) 16)
+"fff0000000000000"
+> (number->string (flonum->bit-field +inf.0) 16)
+"7ff0000000000000"
+> (number->string (flonum->bit-field -0.0) 16)
+"8000000000000000"
+> (number->string (flonum->bit-field 0.0) 16)
+"0"
+> (number->string (flonum->bit-field -1.0) 16)
+"bff0000000000000"
+> (number->string (flonum->bit-field 1.0) 16)
+"3ff0000000000000"
+> (number->string (flonum->bit-field +nan.0) 16)
+"7ff8000000000000"
+</enscript>
+
+<procedure>(bit-field->flonum i) -> flonum</procedure>
+
+; i : integer
+
+The inverse of {{flonum->bit-field}}.
+
+<procedure>(flonum->ordinal x) -> integer</procedure>
+
+; x : flonum
+
+Returns the signed ordinal index of {{x}} in a total order over flonums.
+
+When inputs are not {{+nan.0}}, this function is monotone and symmetric; i.e.
+if {{(fp<= x y)}} then {{(<= (flonum->ordinal x) (flonum->ordinal y))}}, and
+{{(= (flonum->ordinal (- x)) (- (flonum->ordinal x)))}}.
+
+Examples:
+<enscript highlight="scheme">
+> (flonum->ordinal -inf.0)
+-9218868437227405312
+> (flonum->ordinal +inf.0)
+9218868437227405312
+> (flonum->ordinal -0.0)
+0
+> (flonum->ordinal 0.0)
+0
+> (flonum->ordinal -1.0)
+-4607182418800017408
+> (flonum->ordinal 1.0)
+4607182418800017408
+> (flonum->ordinal +nan.0)
+9221120237041090560
+</enscript>
+
+These properties mean that {{flonum->ordinal}} does not distinguish -0.0 and 0.0.
+
+<procedure>(ordinal->flonum i) -> flonum</procedure>
+
+- i : integer
+
+The inverse of {{flonum->ordinal}}.
+
+<procedure>(flonums-between x y) -> integer</procedure>
+
+; x : flonum
+; y : flonum
+
+Returns the number of flonums between x and y, excluding one endpoint.
+Equivalent to {{(- (flonum->ordinal y) (flonum->ordinal x))}}.
+
+Examples:
+<enscript highlight="scheme">
+> (flonums-between 0.0 1.0)
+4607182418800017408
+> (flonums-between 1.0 2.0)
+4503599627370496
+> (flonums-between 2.0 3.0)
+2251799813685248
+> (flonums-between 1.0 +inf.0)
+4611686018427387904
+</enscript>
+
+<procedure>(fpstep x n) -> flonum</procedure>
+
+; x : flonum
+; n : integer
+
+Returns the flonum {{n}} flonums away from {{x}}, according to
+{{flonum->ordinal}}. If {{x}} is {{+nan.0}}, returns {{+nan.0}}.
+
+Examples:
+<enscript highlight="scheme">
+> (fpstep 0.0 1)
+5e-324
+> (fpstep (fpstep 0.0 1) -1)
+0.0
+> (fpstep 0.0 -1)
+-5e-324
+> (fpstep +inf.0 1)
++inf.0
+> (fpstep +inf.0 -1)
+1.7976931348623157e+308
+> (fpstep -inf.0 -1)
+-inf.0
+> (fpstep -inf.0 1)
+-1.7976931348623157e+308
+> (fpstep +nan.0 1000)
++nan.0
+</enscript>
+
+<procedure>(fpnext x) -> flonum</procedure>
+<procedure>(fpprev x) -> flonum</procedure>
+
+; x : flonum
+
+Equivalent to {{(flstep x 1)}} and {{(flstep x -1)}}, respectively.
+
+<procedure>(fpsubnormal? x) -> boolean</procedure>
+
+; x : flonum
+
+Returns {{#t}} when {{x}} is a
+[[https://en.wikipedia.org/wiki/Denormal_number|subnormal number]].
+
+Though flonum operations on subnormal numbers are still often implemented by
+software exception handling, the situation is improving. Robust flonum
+functions should handle subnormal inputs correctly, and reduce error in outputs
+as close to zero ulps as possible (see {{fpulp}}).
+
+<constant>-max-subnormal.0</constant>
+<constant>+max-subnormal.0</constant>
+
+The maximum positive and negative subnormal flonums. A flonum {{x}} is
+subnormal when it is not zero and {{(<= (abs x) +max-subnormal.0)}}.
+
+Example:
+<enscript highlight="scheme">
+> +max-subnormal.0
+2.225073858507201e-308
+</enscript>
+
+===== Double-Double Operations
+
+For extra precision, floating-point computations may use two nonoverlapping
+flonums to represent a single number. Such pairs are often called
+''double-double'' numbers. The exact sum of the pair is the number it
+represents. (Because they are nonoverlapping, the floating-point sum is equal
+to the largest.)
+
+For speed, especially with arithmetic operations, there is no data type for
+double-double numbers. They are always unboxed: given as two arguments, and
+received as two values. In both cases, the number with higher magnitude is
+first.
+
+Inputs are never checked to ensure they are sorted and nonoverlapping, but
+outputs are guaranteed to be sorted and nonoverlapping if inputs are.
+
+<procedure>(fp2 x [y]) -> flonum flonum</procedure>
+
+; x : number (or flonum if y passed)
+; y : flonum
+
+Converts a real number or the sum of two flonums into a double-double.
+
+<enscript highlight="scheme">
+> (fp 1/7)
+0.14285714285714285
+> (relative-error (fp 1/7) 1/7)
+5.551115123125783e-17
+> (define-values (x2 x1) (fp2 1/7))
+> (list x2 x1)
+(0.14285714285714285 7.93016446160826e-18)
+> (fp (relative-error (+ (inexact->exact x2)
+                         (inexact->exact x1))
+                      1/7))
+3.0814879110195774e-33
+</enscript>
+
+Notice that the exact sum of {{x2}} and {{x1}} in the preceeding example has very low
+relative error.
+
+If {{x}} is not rational, {{fp2}} returns (values x 0.0).
+
+<procedure>(fp2->real x2 x1) -> number</procedure>
+
+; x2 : flonum
+; x1 : flonum
+
+Returns the exact sum of {{x2}} and {{x1}} if {{x2}} is rational, {{x2}}
+otherwise.
+
+<enscript highlight="scheme">
+> (define-values (x2 x1) (fp2 1/7))
+> (fp2->real x2 x1)
+46359793379775246683308002939465/324518553658426726783156020576256
+</enscript>
+
+<procedure>(fp2? x2 x1) -> boolean</procedure>
+
+When {{x2}} is rational, returns {{#t}} when {{(fpabs x2) > (fpabs x1)}} and
+{{x2}} and {{x1}} are nonoverlapping. When {{x2}} is not rational, returns
+{{(fp= x1 0.0)}}.
+
+Examples:
+<enscript highlight="scheme">
+> (define-values (x2 x1) (fl2 1/7))
+> (fl2? x2 x1)
+#t
+> (fl2? 0.14285714285714285 0.07692307692307693)
+#f
+> (fl2? +inf.0 0.0001)
+#f
+</enscript>
+
+This function is quite slow, so it is used only for testing.
+
+<procedure>(fp+/error x y) -> flonum flonum</procedure>
+<procedure>(fp-/error x y) -> flonum flonum</procedure>
+<procedure>(fp*/error x y) -> flonum flonum</procedure>
+<procedure>(fp//error x y) -> flonum flonum</procedure>
+<procedure>(fpsqr/error x) -> flonum flonum</procedure>
+<procedure>(fpsqrt/error x) -> flonum flonum</procedure>
+<procedure>(fpexp/error x) -> flonum flonum</procedure>
+<procedure>(fpexpm1/error x) -> flonum flonum</procedure>
+
+Compute the same values as {{(fp+ x y)}}, {{(fp- x y)}}, {{(fp* x y)}}, {{(fp/
+x y)}}, {{(fp* x x)}}, {{(fpsqrt x)}}, {{(fpexp x)}} and {{(fpexpm1 x)}}, but
+return the normally rounded-off low-order bits as the second value. The result
+is an unboxed double-double.
+
+Use these functions to generate double-double numbers directly from the results
+of floating-point operations.
+
+For {{fpexp/error}} and {{fpexpm1/error}}, the largest observed error is 3
+ulps. (See {{fp2ulp}}.) For the rest, the largest observed error is 0.5 ulps.
+
+
+<procedure>(fp2zero? x2 x1) -> boolean</procedure>
+<procedure>(fp2rational? x2 x1) -> boolean</procedure>
+<procedure>(fp2positive? x2 x1) -> boolean</procedure>
+<procedure>(fp2negative? x2 x1) -> boolean</procedure>
+<procedure>(fp2infinite? x2 x1) -> boolean</procedure>
+<procedure>(fp2nan? x2 x1) -> boolean</procedure>
+
+; x2 : flonum
+; x1 : flonum
+
+Like {{zero?}}, {{rational?}}, {{positive?}}, {{negative?}}, {{infinite?}} and
+{{nan?}}, but for double-double flonums.
+
+
+<procedure>(fp2+ x2 x1 y2 [y1]) -> flonum flonum</procedure>
+<procedure>(fp2- x2 x1 y2 [y1]) -> flonum flonum</procedure>
+<procedure>(fp2* x2 x1 y2 [y1]) -> flonum flonum</procedure>
+<procedure>(fp2/ x2 x1 y2 [y1]) -> flonum flonum</procedure>
+<procedure>(fp2abs x2 [x1]) -> flonum flonum</procedure>
+<procedure>(fp2sqr x2 [x1]) -> flonum flonum</procedure>
+<procedure>(fp2sqrt x2 [x1]) -> flonum flonum</procedure>
+
+; x2 : flonum
+; x1 : flonum
+; y2 : flonum
+; y1 : flonum
+
+Arithmetic and square root for double-double flonums. For arithmetic, error is
+less than 8 ulps. (See {{fp2ulp}}.) For {{fp2sqr}} and {{fp2sqrt}}, error is
+less than 1 ulp, and {{fp2abs}} is exact.
+
+<procedure>(fp2= x2 x1 y2 y1)</procedure>
+<procedure>(fp2> x2 x1 y2 y1)</procedure>
+<procedure>(fp2< x2 x1 y2 y1)</procedure>
+<procedure>(fp2>= x2 x1 y2 y1)</procedure>
+<procedure>(fp2<= x2 x1 y2 y1)</procedure>
+
+; x2 : flonum
+; x1 : flonum
+; y2 : flonum
+; y1 : flonum
+
+Comparison functions for double-double flonums.
+
+
+<procedure>(fp2exp x2 x1)</procedure>
+<procedure>(fp2log x2 x1)</procedure>
+<procedure>(fp2expm1 x2 x1)</procedure>
+<procedure>(fp2log1p x2 x1)</procedure>
+
+Like {{fpexp}}, {{fplog}}, {{fpexpm1}} and {{fplog1p}}, but for double-double
+flonums.
+
+For {{fp2exp}} and {{fp2expm1}}, error is less than 3 ulps. (See {{flpulp}}.)
+For {{fp2log}} and {{}fp2log1p}}, error is less than 2 ulps.
+
+====== Debugging Double-Double Functions
+
+<procedure>(fp2ulp x2 x1) -> flonum</procedure>
+<procedure>(fp2ulp-error x2 x1 r) -> flonum</procedure>
+
+; x2 : flonum
+; x1 : flonum
+; r : flonum
+
+Like {{fpulp}} and {{fpulp-error}}, but for double-double flonums.
+
+The unit in last place of a double-double is that of the higher-order of the
+pair, shifted 52 bits right.
+
+Examples:
+
+<enscript highlight="scheme">
+> (fp2ulp 1.0 0.0)
+4.930380657631324e-32
+> (let-values ([(x2 x1)  (fl2 1/7)])
+    (fp2ulp-error x2 x1 1/7))
+0.07142857142857142
+</enscript>
+
+<constant>+max.hi</constant>
+<constant>+max.lo</constant>
+<constant>-max.hi</constant>
+<constant>-max.lo</constant>
+
+The maximum-magnitude, unboxed double-double flonums.
+
+<constant>+max-subnormal.hi</constant>
+<constant>-max-subnormal.hi</constant>
+
+The high-order flonum of the maximum-magnitude, subnormal double-double
+flonums.
+
+<enscript highlight="scheme">
+> +max-subnormal.0
+2.225073858507201e-308
+> +max-subnormal.hi
+1.0020841800044864e-292
+</enscript>
+
+Try to avoid computing with double-doubles in the subnormal range in
+intermediate computations.
+
+====== Low-level Double-Double Operations
+
+The following syntactic forms are fast versions of functions like
+{{fp+/error}}. They are fast because they make assumptions about the magnitudes
+of and relationships between their arguments, and do not handle non-rational
+double-double flonums properly.
+
+<syntax>(fast-mono-fp+/error x y)</syntax>
+<syntax>(fast-mono-fp-/error x y)</syntax>
+
+Return two values: {{(fp+ x y)}} or {{(fp- x y)}}, and its rounding error. Both
+assume {{(fpabs x) > (fpabs y)}}. The values are unspecified when {{x}} or
+{{y}} is not rational.
+
+
+<syntax>(fast-fp+/error x y)</syntax>
+<syntax>(fast-fp-/error x y)</syntax>
+
+Like {{fast-mono-fp+/error}} and {{fast-mono-fp-/error}}, but do not assume
+{{(fpabs x) > (fpabs y)}}.
+
+<syntax>(fast-fl*/error x y)</syntax>
+<syntax>(fast-fl//error x y)</syntax>
+<syntax>(fast-flsqr/error x)</syntax>
+
+Like {{fp*/error}}, {{fp//error}} and {{fpsqr/error}}, but faster, and may
+return garbage when an argument is subnormal or nearly infinite.
+
+<syntax>(fpsplit x)</syntax>
+
+Returns nonoverlapping {{(values y2 y1)}}, each with 26 bits precision, with
+{{(fpabs y2) > (fpabs y1)}}, such that {{(fp+ y2 y1) = x}}. For {{(flabs x) >
+1.3393857490036326e+300}}, returns {{(values +nan.0 +nan.0)}}.
+
+Used to implement double-double multiplication.
+
+===== Additional Flonum Vector Functions
+
+<procedure>(build-fpvector n proc) -> f64vector</procedure>
+
+; n : integer
+; proc : (fixnum -> flonum)
+
+Creates a length-n flonum vector by applying {{proc}} to the indexes from 0 to
+{{(- n 1)}}. Analogous to build-vector.
+
+Example:
+<enscript highlight="scheme">
+> (build-fpvector 10 fl)
+#f64(0.0 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0)
+</enscript>
+
+<syntax>(inline-build-fpvector n proc)</syntax>
+
+; n : integer
+; proc : (fixnum -> flonum)
+
+Like {{build-flvector}}, but always inlined. This increases speed at the expense of
+code size.
+
+<syntax>(fpvector-map proc xs xss ...) -> f64vector</syntax>
+
+; proc : (flonum flonum ... -> flonum)
+; xs : f64vector
+; xss : f64vector
+
+Applies {{proc}} to the corresponding elements of {{xs}} and {{xss}}. Analogous
+to {{vector-map}}.
+
+The {{proc}} is meant to accept the same number of arguments as the number of its
+following flonum vector arguments.
+
+<syntax>(inline-fpvector-map proc xs xss ...)</syntax>
+
+; proc : (flonum flonum ... -> flonum)
+; xs : f64vector
+; xss : f64vector
+
+Like {{flvector-map}}, but always inlined.
+
+<procedure>(fpvector-copy! dest dest-start src [src-start src-end]) -> void</procedure>
+
+; dest : f64vector
+; dest-start : integer
+; src : f64vector
+; src-start : integer
+; src-end : integer
+
+Like {{vector-copy!}} but for flonum vectors.
+
+<procedure>(list->fpvector vs) -> f64vector</procedure>
+<procedure>(fpvector->list xs) -> (list-of flonum)</procedure>
+<procedure>(vector->fpvector vs) -> f64vector</procedure>
+<procedure>(fpvector->vector xs) -> (vector-of flonum)</procedure>
+
+; vs : (list-of number)
+; xs : f64vector
+
+Convert between lists and flonum vectors, and between vectors and flonum
+vectors.
+
+<procedure>(fpvector+ xs ys) -> f64vector</procedure>
+<procedure>(fpvector* xs ys) -> f64vector</procedure>
+<procedure>(fpvector- xs [ys]) -> f64vector</procedure>
+<procedure>(fpvector/ xs [ys]) -> f64vector</procedure>
+<procedure>(fpvector-scale xs y) -> f64vector</procedure>
+<procedure>(fpvector-abs xs) -> f64vector</procedure>
+<procedure>(fpvector-sqr xs) -> f64vector</procedure>
+<procedure>(fpvector-sqrt xs) -> f64vector</procedure>
+<procedure>(fpvector-min xs) -> f64vector</procedure>
+<procedure>(fpvector-max xs) -> f64vector</procedure>
+
+; xs : f64vector
+; ys : f64vector
+; y : flonum
+
+Arithmetic lifted to operate on flonum vectors.
+
+<procedure>(fpvector-sum xs) -> flonum</procedure>
+
+; xs : f64vector
+
+Like {{fpsum}}, but operates on flonum vectors. In fact, {{fpsum}} is defined in terms
+of {{fpvector-sum}}.
+
+<procedure>(fpvector-sums xs) -> f64vector</procedure>
+
+; xs : f64vector
+
+Computes the partial sums of the elements in {{xs}} in a way that incurs rounding
+error only once for each partial sum.
+
+Example:
+<enscript highlight="scheme">
+> (fpvector-sums
+   #f64(1.0 1e-16 1e-16 1e-16 1e-16 1e+100 -1e+100))
+#f64(1.0 1.0 1.0 1.0 1.0 1e+100 1.0)
+</enscript>
+
+Compare the same example computed by direct summation:
+
+<enscript highlight="scheme">
+> (import srfi-1)
+> (cdr
+   (reverse
+    (fold (lambda (x xs) (cons (+ x (first xs)) xs))
+          (list 0.0)
+          '(1.0 1e-16 1e-16 1e-16 1e-16 1e+100 -1e+100))))
+'(1.0 1.0 1.0 1.0 1.0 1e+100 0.0)
+</enscript>
 
 ==== (math number-theory)
 
@@ -427,7 +1591,7 @@ corresponds with the mathematical statement ''a^b'' = ''c'' (mod ''n'').
 The current modulus is stored in a parameter that, for performance reasons, can
 only be set using with-modulus. (The basic modular operators cache parameter
 reads, and this restriction guarantees that the cached values are current.
-'''NOTE:''' I'm not entirely sure this is true for the chicken port, as a
+'''NOTE:''' I'm not entirely sure this is true for the CHICKEN port, as a
 slightly more complicated racket syntax-case has been turned into a simple
 syntax-rule for {{(parameterize ...)}})
 
@@ -1469,23 +2633,6 @@ Returns a list of all primitive roots of {Un}. The modulus {{n}} must be positiv
 
 [[https://docs.racket-lang.org/math/]]
 
-=== Development status
-
-This egg is still largely under active development, with the exception of the
-{{math.number-theory}} module, which is finished and ready for use.
-
-
-=== Implementation caveats
-
-* It's possible some undefined behavior may occur with arguments of the wrong
-  type, since a good amount of the original functions were originally defined
-  in typed racket, which AFAIK would catch those and throw an exception.
-
-* In some places the original implementation references {{unsafe-}} {{fx}} and
-  {{fl}} operators, but these are actually just aliased to safe operators. This
-  implementation just uses chicken's {{chicken.fixnum}} module, which is
-  unsafe. This may also lead to undefined behavior in some cases.
-
 === Author
 
 Neil Toronto and Jens Axel Søgaard for Racket
@@ -1504,6 +2651,7 @@ GPL-3.0
 
 === Version History
 
+; 0.3.1 : Ensure to export all api procedures, correct module dependencies for build
 ; 0.3.0 : Finish (math base) and (math flonum), bug and typo fixes, credit original authors
 ; 0.2.3 : Fix broken .egg file
 ; 0.2.2 : Re-organize internals, add (math base constants)
