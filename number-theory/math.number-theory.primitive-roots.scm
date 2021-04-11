@@ -50,8 +50,9 @@
            (with-modulus n
                          (let loop ([k 1]
                                     [a g])
-                           (cond [(mod= a 1)  k]
-                                 [else  (loop (+ k 1) (mod* a g))])))]))
+                           (assume ((k integer) (a integer))
+                            (cond [(mod= a 1)  k]
+                                 [else  (loop (+ k 1) (mod* a g))]))))]))
 
   (: unit-group-orders (integer -> (list-of integer)))
   (define (unit-group-orders n)
@@ -95,7 +96,8 @@
            (let ((phi-n (totient n)))
              (with-modulus n
                            (andmap (lambda (x) x)
-                                   (map (lambda (q) (not (mod= (modexpt g (quotient phi-n q)) 1)))
+                                   (map (lambda (q)
+                                          (not (mod= (modexpt g (quotient phi-n q)) 1)))
                                         (prime-divisors phi-n)))))]))
 
   ;; primitive-root : N -> Un
@@ -134,15 +136,17 @@
                (with-modulus n
                              (andmap (lambda (x) x)
                                      (map (lambda (q)
-                                            (not (mod= (modexpt g (quotient phi-n q)) 1)))
+                                            (assume ((q integer))
+                                              (not (mod= (modexpt g (quotient phi-n q)) 1))))
                                           qs))))
              (let loop ([g 1]
                         [roots '()])
-               (cond
+               (assume ((g integer) (roots (list-of integer)))
+                (cond
                 [(= g n)                (reverse roots)]
                 [(not (coprime? g n))   (loop (+ g 1)  roots)]
                 [(primitive-root? g)    (loop (+ g 1) (cons g roots))]
-                [else                   (loop (+ g 1)  roots)])))]))
+                [else                   (loop (+ g 1)  roots)]))))]))
 
   (: primitive-root (integer -> (or integer false)))
   (define (primitive-root n)
@@ -171,11 +175,13 @@
              (define (primitive-root? g)
                (with-modulus n
                              (andmap (lambda (x) x)
-                                     (map (lambda (q)
-                                            (not (mod= (modexpt g (quotient phi-n q)) 1)))
-                                          qs))))
+                                       (map (lambda (q)
+                                              (assume ((q integer))
+                                                (not (mod= (modexpt g (quotient phi-n q)) 1))))
+                                            qs))))
              (let loop ([g 1])
-               (cond [(= g n)                #f]
-                     [(not (coprime? g n))   (loop (+ g 1))]
-                     [(primitive-root? g)    g]
-                     [else                   (loop (+ g 1))])))])))
+               (assume ((g integer))
+                 (cond [(= g n)                #f]
+                       [(not (coprime? g n))   (loop (+ g 1))]
+                       [(primitive-root? g)    g]
+                       [else                   (loop (+ g 1))]))))])))

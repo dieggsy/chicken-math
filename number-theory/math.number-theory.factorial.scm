@@ -18,7 +18,8 @@
     (list->vector
      (reverse
       (fold (lambda (n ns)
-              (cons (* n (car ns)) ns))
+              (assume ((n integer) (ns (list-of integer)))
+                (cons (* n (car ns)) ns)))
             '(1)
             (list-tabulate (- fact-table-size 1) add1)))))
 
@@ -40,10 +41,11 @@
           [else
            (let loop ([n n]
                       [m 1])
-             (define n-m (- n m))
-             (cond [(<= n-m 0)  n]
-                   [else  (let ((2m (fx* m 2)))
-                            (* (loop n 2m) (loop n-m 2m)))]))]))
+             (assume ((n fixnum) (m fixnum))
+               (define n-m (- n m))
+               (cond [(<= n-m 0)  n]
+                     [else  (let ((2m (fx* m 2)))
+                              (* (loop n 2m) (loop n-m 2m)))])))]))
 
   (: permutations (integer integer -> integer))
   (define (permutations n k)

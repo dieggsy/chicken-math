@@ -16,8 +16,10 @@
           math.flonum.fpvector
           math.racket-shim)
 
+  (include "math-types.scm")
+
   ;; Returns #t if x is an integer power of 2
-  (: power-of-two? (number -> boolean))
+  (: power-of-two? (real -> boolean))
   (define (power-of-two? x)
     (cond [(not (positive? x))  #f]
           [(flonum? x)  (fp= x (fpexpt 2.0 (fpround (fp/ (fplog x) (fplog 2.0)))))]
@@ -26,13 +28,13 @@
           [else  (and (= 1 (numerator x))
                       (power-of-two? (denominator x)))]))
 
-  (: fix-exact-return (number number number -> number))
+  (: fix-exact-return (real real real -> real))
   (define (fix-exact-return x r e)
     (cond ;; [(or (single-flonum? x) (single-flonum? r))  (real->single-flonum e)]
      [(or (flonum? x) (flonum? r))  (fp e)]
      [else  e]))
 
-  (: absolute-error (number number -> number))
+  (: absolute-error (real real -> real))
   (define (absolute-error x r)
     (fix-exact-return
      x r (cond [(eqv? x r)  0]
@@ -40,7 +42,7 @@
                 (abs (- (inexact->exact x) (inexact->exact r)))]
                [else  +inf.0])))
 
-  (: relative-error (number number -> number))
+  (: relative-error (real real -> real))
   (define (relative-error x r)
     (fix-exact-return
      x r (cond [(eqv? x r)  0]
@@ -51,21 +53,23 @@
                   (abs (/ (- (inexact->exact x) exact-r) exact-r)))]
                [else  +inf.0])))
 
-  (: sum ((list-of number) -> number))
+  (: sum ((list-of real) -> real))
   (define (sum xs)
     (let loop ([xs xs]
                [r  0]
                [fs  '()])
-      (cond [(null? xs)
-             (cond [(null? fs)  r]
-                   [(zero? r)  (fpsum fs)]
-                   [else  (fp (+ r (inexact->exact (fpsum fs))))])]
-            [else
-             (let ([x  (car xs)]
-                   [xs  (cdr xs)])
-               (cond [(flonum? x)  (loop xs r (cons x fs))]
-                     ;; [(single-flonum? x)  (loop xs r (cons (fl x) fs))]
-                     [else  (loop xs (+ x r) fs)]))])))
+      (assume ((r exact-rational)
+               (fs (list-of float)))
+        (cond [(null? xs)
+               (cond [(null? fs)  r]
+                     [(zero? r)  (fpsum fs)]
+                     [else  (fp (+ r (inexact->exact (fpsum fs))))])]
+              [else
+               (let ([x  (car xs)]
+                     [xs  (cdr xs)])
+                 (cond [(flonum? x)  (loop xs r (cons x fs))]
+                       ;; [(single-flonum? x)  (loop xs r (cons (fl x) fs))]
+                       [else  (loop xs (+ x r) fs)]))]))))
 
   ;; ===================================================================================================
   ;; Inverse hyperbolic
@@ -126,7 +130,7 @@
 
   ;; (require 'syntax-defs)
 
-  (: number->float-complex (number -> number))
+  (: number->float-complex (number -> cplxnum))
   (define (number->float-complex z)
     (make-rectangular (fp (real-part z))
                       (fp (imag-part z)))))

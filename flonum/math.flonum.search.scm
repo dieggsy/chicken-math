@@ -80,21 +80,25 @@
       ;; Find an integer k-min <= k for which (pred? k-min) is #f; increment exponentially
       (define-values (k-min k-min?)
         (let loop ([k-min k] [k-min? k?] [i 1.0])
+          (assume ((k-min float)
+                   (i float))
                                         ;(printf "min: ~v~n" k-min)
-          (cond [(fp<= k-min mn)  (cond [(fp= k-min mn)  (values k-min k-min?)]
-                                            [else  (values mn (pred? mn))])]
-                [k-min?  (let ((prev-k-min (sub-or-prev k-min i)))
-                           (loop prev-k-min (pred? prev-k-min) (* 2.0 (- k-min prev-k-min))))]
-                [else  (values k-min #f)])))
+            (cond [(fp<= k-min mn)  (cond [(fp= k-min mn)  (values k-min k-min?)]
+                                          [else  (values mn (pred? mn))])]
+                  [k-min?  (let ((prev-k-min (sub-or-prev k-min i)))
+                             (loop prev-k-min (pred? prev-k-min) (* 2.0 (- k-min prev-k-min))))]
+                  [else  (values k-min #f)]))))
       ;; Find an integer k-max >= k0 for which (pred? k-max) is #t; increment exponentially
       (define-values (k-max k-max?)
         (let loop  ([k-max k] [k-max? k?] [i 1.0])
                                         ;(printf "max: ~v~n" k-max)
-          (cond [(fp>= k-max mx)  (cond [(fp= k-max mx)  (values k-max k-max?)]
-                                        [else  (values mx (pred? mx))])]
-                [k-max?  (values k-max #t)]
-                [else   (let ((next-k-max (add-or-next k-max i)))
-                          (loop next-k-max (pred? next-k-max) (* 2.0 (- next-k-max k-max))))])))
+          (assume ((k-max float)
+                   (i float))
+            (cond [(fp>= k-max mx)  (cond [(fp= k-max mx)  (values k-max k-max?)]
+                                          [else  (values mx (pred? mx))])]
+                  [k-max?  (values k-max #t)]
+                  [else   (let ((next-k-max (add-or-next k-max i)))
+                            (loop next-k-max (pred? next-k-max) (* 2.0 (- next-k-max k-max))))]))))
       ;; Quickly check cases #2 and #3; if case #1, do a binary search
       (cond [(not k-max?)  +nan.0]
             [k-min?  mn]

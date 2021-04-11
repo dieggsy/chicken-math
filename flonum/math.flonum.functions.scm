@@ -9,13 +9,15 @@
           chicken.type
           chicken.flonum
           chicken.module
-          (only chicken.base let*-values)
+          (only chicken.base let*-values include)
           (only chicken.foreign foreign-declare foreign-value)
           math.flonum.constants
           math.flonum.bits
           math.racket-shim)
 
   (reexport chicken.flonum)
+
+  (include "math-types.scm")
 
   (: fpsubnormal? (float -> boolean))
   (define (fpsubnormal? x)
@@ -68,7 +70,7 @@
   ;; ==========================================================================
   ;; Error measurement
 
-  (: fpulp-error (float number -> float))
+  (: fpulp-error (float real -> float))
   (define (fpulp-error x r)
     (define r.0 (fp r))
     (cond [(eqv? x r)  0.0]

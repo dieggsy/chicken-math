@@ -4,8 +4,9 @@
 (define current-modulus-param
   (make-parameter
    1 (lambda (n)
-       (cond [(<= n 0) (error 'with-modulus "not a positive integer:" n)]
-             [else n]))))
+       (assume ((n integer))
+        (cond [(<= n 0) (error 'with-modulus "not a positive integer:" n)]
+             [else n])))))
 
 (define (current-modulus)
   (current-modulus-param))
@@ -27,7 +28,7 @@
                     (modulo (* c c) n))]
                  [else  (modulo (* a (loop a (sub1 b))) n)]))]))
 
-(: modular-const* (integer number -> integer))
+(: modular-const* (integer exact-rational -> integer))
 (define (modular-const* n a)
   (cond [(integer? a)  (modulo a n)]
         [else  (modulo (* (numerator a) (modular-inverse* n (denominator a))) n)]))

@@ -139,7 +139,7 @@
     (cond [(< n 0)  +nan.0]
           [(ormap negative? ks)  +nan.0]
           [(not (= n (apply + ks)))  -inf.0]
-          [(ormap (lambda (k) (= n k)) ks)  0.0]
+          [(ormap (lambda (k) (assume ((k float)) (= n k))) ks)  0.0]
           [else  (apply - (fplog-factorial n) (map fplog-factorial ks))]))
 
   (: fpmultinomial (float (list-of float) -> float))

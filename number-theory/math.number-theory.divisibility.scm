@@ -71,5 +71,5 @@
             [st  (bezout-binary (apply gcd bs) a)])
         (let ([s (car st)]
               [t (cadr st)])
-          (cons t (map (lambda (u) (* s u))
+          (cons t (map (lambda (u) (assume ((u integer)) (* s u)))
                        uvs))))])))

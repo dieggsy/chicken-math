@@ -5,6 +5,8 @@
           (only miscmacros ensure)
           math.racket-shim)
 
+  (include "math-types.scm")
+
   (: binomial* (integer integer -> integer))
   (define (binomial* n k)
     ;;  compute the binomial coeffecient n choose k
@@ -12,18 +14,21 @@
     (ensure
      natural?
      (let loop ([n n] [k k])
-       (cond
-        [(= k 0) 1]
-        [(= k 1) n]
-        [(> k n) 0]
-        [(= k 2) (/ (* n (- n 1)) 2)]
-        [(> k (/ n 2)) (loop n (- n k))]
-        [else (* (+ n (- k) 1)
-                 (let loop1 ((prod 1)
-                             (i 2))
-                   (if (> i k)
-                       prod
-                       (loop1 (* prod (/ (+ n (- k) i) i)) (add1 i)))))]))))
+       (assume ((n exact-rational) (k exact-rational))
+         (cond
+          [(= k 0) 1]
+          [(= k 1) n]
+          [(> k n) 0]
+          [(= k 2) (/ (* n (- n 1)) 2)]
+          [(> k (/ n 2)) (loop n (- n k))]
+          [else (* (+ n (- k) 1)
+                   (let loop1 ((prod 1)
+                               (i 2))
+                     (assume ((prod exact-rational)
+                              (i integer))
+                       (if (> i k)
+                           prod
+                           (loop1 (* prod (/ (+ n (- k) i) i)) (add1 i))))))])))))
 
   (: binomial (integer integer -> integer))
   (define (binomial n k)

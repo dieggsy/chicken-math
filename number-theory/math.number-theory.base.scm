@@ -57,6 +57,7 @@
           (only miscmacros ensure)
           math.racket-shim)
 
+  (include "math-types.scm")
   ;;
   ;; Configuration
   ;;
@@ -122,7 +123,7 @@
       (error 'solve-chinese "bad argument type - not a list of positive integers" ns))
     ;; the ns should be coprime
     (let* ([n  (apply * ns)]
-           [cs (map (lambda (ni) (quotient n ni)) ns)]
+           [cs (map (lambda (ni) (assume ((ni integer)) (quotient n ni))) ns)]
            [ds (map modular-inverse cs ns)]
            [es ds])
       (modulo (apply + (map * as cs es)) n)))
@@ -284,9 +285,10 @@
           [else
            (let loop ((m 0)
                       (p 2))
-             (if (= m n)
-                 p
-                 (loop (add1 m) (next-prime p))))]))
+             (assume ((p integer) (m integer))
+               (if (= m n)
+                   p
+                   (loop (add1 m) (next-prime p)))))]))
 
   (: random-prime (integer -> integer))
   (define (random-prime n)
@@ -363,12 +365,14 @@
          [(divides? 3 n) `((3 1) ,@(pollard-factorize (quotient n 3)))]
          [(simple-perfect-power n)
           => (lambda (base-and-exp)
-               (cond
+               (assume ((base-and-exp (list integer integer)))
+                (cond
                 [(prime? (car base-and-exp)) (list base-and-exp)]
                 [else (map (lambda (b-and-e)
-                             (list (car b-and-e)
-                                   (* (cadr base-and-exp) (cadr b-and-e))))
-                           (pollard-factorize (car base-and-exp)))]))]
+                             (assume ((b-and-e (list integer integer)))
+                              (list (car b-and-e)
+                                   (* (cadr base-and-exp) (cadr b-and-e)))))
+                           (pollard-factorize (car base-and-exp)))])))]
          [else
           (let loop ([divisor (pollard n)])
             (if divisor
@@ -484,9 +488,10 @@
   (define (powers-of a n)
     (let loop ([i 0]
                [a^i 1])
-      (if (<= i n)
-          (cons a^i (loop (+ i 1) (* a^i a)))
-          '())))
+      (assume ((a integer) (a^i integer))
+        (if (<= i n)
+            (cons a^i (loop (+ i 1) (* a^i a)))
+            '()))))
 
   (define prime-divisors/exponents factorize)
 
@@ -503,7 +508,7 @@
   (: prime-omega (integer -> integer))
   ;; http://reference.wolfram.com/mathematica/ref/PrimeOmega.html
   (define (prime-omega n)
-    (apply +  (prime-exponents n)))
+    (apply + (prime-exponents n)))
 
   (: integer-root/remainder (integer integer -> integer integer))
   (define (integer-root/remainder a n)
@@ -539,22 +544,23 @@
                                 [nth-root-top-bits (integer-root top-bits y)])
                            (arithmetic-shift (+ nth-root-top-bits 1) length/y/2))])
                     (let loop ([g init-g])
-                      (let* ([a (expt g (ensure natural? (- y 1)))]
-                             [b (* a y)]
-                             [c (* a (- y 1))]
-                             [d (quotient (+ x (* g c)) b)])
-                        (let ([diff (- d g)])
-                          (cond [(not (negative? diff))
-                                 g]
-                                [(< diff -1)
-                                 (loop d)]
-                                [else
-                                 ;; once the difference is one, it's more
-                                 ;; efficient to just decrement until g^y <= x
-                                 (let loop ((g d))
-                                   (if (not (< x (expt g y)))
-                                       g
-                                       (loop (- g 1))))]))))))])))]))
+                      (assume ((init-g integer))
+                        (let* ([a (expt g (ensure natural? (- y 1)))]
+                               [b (* a y)]
+                               [c (* a (- y 1))]
+                               [d (quotient (+ x (* g c)) b)])
+                          (let ([diff (- d g)])
+                            (cond [(not (negative? diff))
+                                   g]
+                                  [(< diff -1)
+                                   (loop d)]
+                                  [else
+                                   ;; once the difference is one, it's more
+                                   ;; efficient to just decrement until g^y <= x
+                                   (let loop ((g d))
+                                     (if (not (< x (expt g y)))
+                                         g
+                                       (loop (- g 1))))])))))))])))]))
 
 
   (: simple-as-power (integer -> integer integer))
@@ -564,12 +570,13 @@
     ;; (displayln (list 'simple-as-power a))
     ;; Note: The simple version is used by pollard-factorize
     (let loop ([n (integer-length a)])
-      (let-values ([(root rem) (integer-root/remainder a (add1 n))])
-        (if (zero? rem)
-            (values root (ensure natural? (add1 n)))
-            (if (positive? n)
-                (loop (sub1 n))
-                (error 'simple-as-power "internal error"))))))
+      (assume ((n integer))
+        (let-values ([(root rem) (integer-root/remainder a (add1 n))])
+          (if (zero? rem)
+              (values root (ensure natural? (add1 n)))
+              (if (positive? n)
+                  (loop (sub1 n))
+                  (error 'simple-as-power "internal error")))))))
 
   ;;
   ;; DIVISORS
@@ -593,7 +600,7 @@
              (let ([divisors-of-g (factorization->divisors g)])
                (apply append
                       (map
-                       (lambda (p^i) (map (lambda (d) (* p^i d)) divisors-of-g))
+                       (lambda (p^i) (map (lambda (d) (assume ((d integer)) (* p^i d))) divisors-of-g))
                        (powers-of p n)))))]))
 
   ;;
@@ -620,7 +627,7 @@
     (let ((ps (prime-divisors n)))
       (ensure natural?
               (* (quotient n (apply * ps))
-                 (apply * (map (lambda (p) (sub1 p)) ps))))))
+                 (apply * (map (lambda (p) (assume ((p integer)) (sub1 p))) ps))))))
 
   ;; moebius-mu : natural -> {-1,0-1}
   ;;   mu(n) =  1  if n is a product of an even number of primes
@@ -654,23 +661,25 @@
              (let loop ([sum 1]
                         [n 0]
                         [p-to-n 1])
-               (cond [(= n e) sum]
+               (assume ((sum integer) (n integer) (p-to-n integer))
+                (cond [(= n e) sum]
                      [else (let ([t (* p p-to-n)])
-                             (loop (+ t sum) (+ n 1) t))])))
+                             (loop (+ t sum) (+ n 1) t))]))))
            (define (divisor-sumk p e)
              (let ([p-to-k (expt p k)])
                (let loop ([sum 1]
                           [n 0]
                           [p-to-kn 1])
-                 (cond [(= n e) sum]
-                       [else (let ([t (* p-to-k p-to-kn)])
-                               (loop (+ t sum) (+ n 1) t))]))))
+                 (assume ((sum integer) (n integer) (p-to-kn integer))
+                   (cond [(= n e) sum]
+                         [else (let ([t (* p-to-k p-to-kn)])
+                                 (loop (+ t sum) (+ n 1) t))])))))
            (apply * (map (cond [(= k 0) divisor-sum0]
                                [(= k 1) divisor-sum1]
                                [else divisor-sumk])
                          ps es)))])))
 
-  (: mangoldt-lambda (integer -> number))
+  (: mangoldt-lambda (integer -> real))
   (define (mangoldt-lambda n)
     (cond
      [(<= n 0) (error 'mangoldt-lambda "bad argument type - not a positive integer" n)]

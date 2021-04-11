@@ -4,7 +4,9 @@
  (category math)
  (license "GPL-3.0")
  (component-options
-  (csc-options -O3 -C -O3 -C -Wfatal-errors))
+  (csc-options -strict-types -O3 -C -O3 -C -Wfatal-errors)
+  ;; (csc-options -strict-types -cc tcc -ld tcc -d3 -C -Wfatal-errors)
+  )
  (dependencies srfi-1 r6rs-bytevectors miscmacros srfi-133 srfi-42)
  (test-dependencies test srfi-1)
  (components
@@ -32,7 +34,8 @@
              (source "base/math.base.functions.scm")
              (component-dependencies math.flonum.functions
                                      math.flonum.more-functions
-                                     math.racket-shim))
+                                     math.racket-shim)
+             (source-dependencies "math-types.scm"))
 
   ;; Flonum
   ;; TODO: bf parts of flonum
@@ -83,7 +86,8 @@
              (source "flonum/math.flonum.exp.scm")
              (component-dependencies math.flonum.functions
                                      math.flonum.constants
-                                     math.flonum.polyfun))
+                                     math.flonum.polyfun)
+             (source-dependencies "math-types.scm"))
   (extension math.flonum.factorial
              (types-file)
              (source "flonum/math.flonum.factorial.scm")
@@ -97,7 +101,8 @@
   (extension math.flonum.functions ;; 2021-01-31
              (types-file)
              (source "flonum/math.flonum.functions.scm")
-             (component-dependencies math.flonum.constants))
+             (component-dependencies math.flonum.constants)
+             (source-dependencies "math-types.scm"))
   (extension math.flonum.log1pmx
              (types-file)
              (source "flonum/math.flonum.log1pmx.scm")
@@ -123,7 +128,8 @@
                                      math.flonum.log
                                      math.flonum.error
                                      math.flonum.fpvector
-                                     math.flonum.utils))
+                                     math.flonum.utils)
+             (source-dependencies "math-types.scm"))
   (extension math.flonum.polyfun ;; 2021-01-31
              (types-file)
              (source "flonum/math.flonum.polyfun.scm"))
@@ -147,7 +153,8 @@
                                      math.flonum.error
                                      math.flonum.constants
                                      math.flonum.utils
-                                     math.racket-shim))
+                                     math.racket-shim)
+             (source-dependencies "math-types.scm"))
   (extension math.flonum.expansion.exp-reduction
              (types-file)
              (source "flonum/expansion/math.flonum.expansion.exp-reduction.scm")
@@ -208,7 +215,9 @@
   (extension math.number-theory.modular-arithmetic
              (types-file)
              (source "number-theory/math.number-theory.modular-arithmetic.scm")
-             (component-dependencies math.number-theory.divisibility))
+             (component-dependencies math.number-theory.divisibility)
+             (source-dependencies "number-theory/modular-arithmetic-base.scm"
+                                  "math-types.scm"))
 
   (extension math.number-theory.base
              (types-file)
@@ -225,13 +234,15 @@
   (extension math.number-theory.binomial
              (types-file)
              (source "number-theory/math.number-theory.binomial.scm")
-             (component-dependencies math.racket-shim))
+             (component-dependencies math.racket-shim)
+             (source-dependencies "math-types.scm"))
   (extension math.number-theory.bernoulli
              (types-file)
              (source "number-theory/math.number-theory.bernoulli.scm")
              (component-dependencies math.number-theory.binomial
                                      math.vector.base
-                                     math.racket-shim))
+                                     math.racket-shim)
+             (source-dependencies "math-types.scm"))
   (extension math.number-theory.eulerian-number
              (types-file)
              (source "number-theory/math.number-theory.eulerian-number.scm")
@@ -248,7 +259,8 @@
   (extension math.number-theory.quadratic
              (types-file)
              (source "number-theory/math.number-theory.quadratic.scm")
-             (component-dependencies math.racket-shim))
+             (component-dependencies math.racket-shim)
+             (source-dependencies "math-types.scm"))
   (extension math.number-theory.polygonal
              (types-file)
              (source "number-theory/math.number-theory.polygonal.scm")

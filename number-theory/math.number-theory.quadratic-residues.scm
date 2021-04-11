@@ -35,7 +35,8 @@
                               (cdr ps)
                               ps)])
              (and (andmap (lambda (p)
-                            (= (quadratic-character a p) 1))
+                            (assume ((p integer))
+                              (= (quadratic-character a p) 1)))
                           odd-ps)
                   (cond
                    [(divides? 8 n)  (= (modulo a 8) 1)]

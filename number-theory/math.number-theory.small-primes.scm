@@ -17,7 +17,7 @@
   (define mod60->bits (make-vector 60 #f))
 
   (do ((x non-235 (cdr x))
-       (b (the fixnum 0) (add1 b)))
+       (b 0 (fx+ b 1)))
       ((null? x))
     (vector-set! mod60->bits (car x) b))
 
@@ -54,16 +54,16 @@
   (: mark-composites (fixnum -> void))
   (define (mark-composites x)
     (let/cc exit
-            (let loop ((a (the fixnum 0)))
+            (let loop ((a 0))
               (define y-base (fx* a (fx* 60 x)))
               (do ((d non-235 (cdr d)))
                   ((null? d))
-                (define y (ensure fixnum? (fx+ y-base (fx* (car d) x))))
+                (define y (fx+ y-base (fx* (car d) x)))
                 (when (not (fx= y x))
                   (if (fx<= y *SMALL-PRIME-LIMIT*)
                       (clear-bit! y)
                       (exit (void)))))
-              (loop (ensure fixnum? (add1 a))))))
+              (loop (ensure fixnum? (fx+ a 1))))))
 
   (: sieve-done? boolean)
   (define sieve-done? #f)
@@ -72,10 +72,10 @@
   (define (sieve)
     (clear-bit! 1)                      ; 1 is not prime
     (let/cc exit
-            (let loop ((q (the fixnum 0)))
+            (let loop ((q 0))
               (do ((r non-235 (cdr r)))
                   ((null? r))
-                (define x (ensure fixnum? (fx+ (fx* q 60) (car r))))
+                (define x (fx+ (fx* q 60) (car r)))
                 (when (fx> (fx* x x) *SMALL-PRIME-LIMIT*)
                   (exit (void)))
                 (when (inner-bit q (car r)) ; x is prime

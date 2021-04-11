@@ -16,11 +16,12 @@
                                                mod>=)
   (import scheme
           chicken.type
-          (only chicken.base include-relative case-lambda)
+          (only chicken.base include-relative case-lambda include)
           (only srfi-1 fold)
           (only math.number-theory.divisibility bezout coprime?)
           (only miscmacros ensure define-syntax-rule))
 
+  (include "math-types.scm")
   (include-relative "modular-arithmetic-base.scm")
 
   (define-syntax-rule (define-comparison-op name op)
@@ -96,7 +97,7 @@
     (cond [(< b 0)  (modular-expt (modular-inverse a n) (- b) n)]
           [else  (modular-expt a b n)]))
 
-  (: mod (number -> integer))
+  (: mod (exact-rational -> integer))
   (define (mod a)
     (cond [(integer? a)  (modulo a (current-modulus))]
           [else  (mod/ (numerator a) (denominator a))]))

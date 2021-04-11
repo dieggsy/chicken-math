@@ -5,12 +5,16 @@
                          fpexp2
                          fppow2near)
 
+
   (import scheme
+          (only (chicken base) include)
           chicken.type
           (only srfi-1 list-tabulate)
           math.flonum.functions
           math.flonum.constants
           math.flonum.polyfun)
+
+  (include "math-types.scm")
 
   (define (build-vector len fn)
     (list->vector (list-tabulate len fn)))
@@ -48,7 +52,7 @@
 
   (define (build-fpexp2s)
     (: new-fpexp2s (vector-of float))
-    (define new-fpexp2s (build-vector (- 1024 -1074) (lambda (n) (fp (expt 2 (- n 1074))))))
+    (define new-fpexp2s (build-vector (- 1024 -1074) (lambda (n) (assume ((n index)) (fp (expt 2 (- n 1074)))))))
     (set! fpexp2s new-fpexp2s)
     new-fpexp2s)
 

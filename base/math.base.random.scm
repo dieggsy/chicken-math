@@ -21,11 +21,13 @@
                  (rem-bits (remainder bits block-bits)))
              (let loop ([blocks 0]
                         [r (random (fxshl 1 rem-bits))])
-               (cond [(fx< blocks max-blocks)
-                      (loop (fx+ blocks 1)
-                            (bitwise-ior (arithmetic-shift r block-bits)
-                                         (random block-size)))]
-                     [else  r])))]))
+               (assume ((blocks fixnum)
+                        (r integer))
+                 (cond [(fx< blocks max-blocks)
+                        (loop (fx+ blocks 1)
+                              (bitwise-ior (arithmetic-shift r block-bits)
+                                           (random block-size)))]
+                       [else  r]))))]))
 
   (define random-max 4294967087)
   (define bias-bits (* 2 block-bits))

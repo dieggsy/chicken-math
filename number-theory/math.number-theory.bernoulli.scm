@@ -7,18 +7,21 @@
           (only miscmacros ensure)
           math.racket-shim)
 
+  (include "math-types.scm")
+
   ;; Number of globally memoized Bernoulli numbers
   (define num-global-bs 200)
   ;; Globally memoized numbers
-  (: global-bs (vector-of number))
+  (: global-bs (vector-of exact-rational))
   (define global-bs (make-vector num-global-bs 0))
   (vector-set! global-bs 0 1)
   (vector-set! global-bs 1 -1/2)
 
-  (: bernoulli* (integer -> number))
+  (: bernoulli* (integer -> exact-rational))
   ;;   compute the n'th Bernoulli number
   ;;   <http://mathworld.wolfram.com/BernoulliNumber.html>
   ;;   <http://en.wikipedia.org/wiki/Bernoulli_number>
+
   (define (bernoulli* n)
     ;; Implementation note:
     ;;   - uses Ramanujan's improvement of the standard recurrence relation
@@ -28,7 +31,7 @@
     ;;   - avoids an explicit call to compute the binomials
     (define local-bs (make-vector (max 0 (- (+ n 1) num-global-bs)) 0))
 
-    (: bs-ref! (integer (-> number) -> number))
+    (: bs-ref! (integer (-> exact-rational) -> exact-rational))
     (define (bs-ref! n thnk)
       (cond [(< n num-global-bs)
              (vector-ref! global-bs n thnk (conjoin exact? zero?))]
@@ -45,7 +48,8 @@
             (/ (* k k-1 k-2 k-3 k-4 k-5 )
                (* (- x k-1) (- x k-2) (- x k-3) (- x k-4) (- x k-5) (- x (- k 6))))))))
 
-    ;; (: A (integer integer -> number))
+    (: bern (integer -> exact-rational))
+    (: A (integer integer -> exact-rational))
     (define (A m M)
       (cond
        [(< M 1) 0]
@@ -63,7 +67,6 @@
                                     (add1 j))))))
             sum))]))
 
-    ;; (: bern (integer -> number))
     (define (bern n)
       (bs-ref!
        n (lambda ()
@@ -79,7 +82,7 @@
                 [else  (error 'unreachable-code)]))]))))
     (bern n))
 
-  (: bernoulli-number (integer -> number))
+  (: bernoulli-number (integer -> exact-rational))
   (define (bernoulli-number n)
     (cond [(< n 0)
            (error 'bernoulli-number "bad argument type - not a nonnegative integer" n)]

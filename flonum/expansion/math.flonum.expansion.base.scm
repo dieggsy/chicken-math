@@ -64,6 +64,8 @@ Other parts shamelessly stolen from crlibm (which is LGPL)
           math.racket-shim)
 
 
+  (include "math-types.scm")
+
   (: floverlapping? (float float -> boolean))
   (define (fpoverlapping? x2 x1)
     (define-values (s2 e2) (flonum->sig+exp (fpabs x2)))
@@ -101,7 +103,7 @@ Other parts shamelessly stolen from crlibm (which is LGPL)
   ;; ===================================================================================================
   ;; Conversion
 
-  (: fp2  (number #!optional float -> float float))
+  (: fp2  (real #!optional float -> float float))
   (define fp2
     (case-lambda
       [(x)
@@ -125,7 +127,7 @@ Other parts shamelessly stolen from crlibm (which is LGPL)
   (define (fp2eqv? x2 x1 y2 #!optional [y1 0.0])
     (and (eqv? x2 y2) (fp= x1 y1)))
 
-  (: fp2->real (float float -> number))
+  (: fp2->real (float float -> real))
   (define (fp2->real x2 x1)
     (if (rational? x2)
         (+ (inexact->exact x2) (inexact->exact x1))
@@ -143,7 +145,7 @@ Other parts shamelessly stolen from crlibm (which is LGPL)
     (cond [(fp= x2 0.0)  0.0]
           [else  (fpmax +min.0 (fp* (fpulp x2) epsilon.0))]))
 
-  (: fp2ulp-error (float float number -> float))
+  (: fp2ulp-error (float float real -> float))
   (define (fp2ulp-error x2 x1 r)
     (define x (fp2->real x2 x1))
     (define-values (r2 r1) (fp2 r))

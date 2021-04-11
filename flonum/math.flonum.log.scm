@@ -85,7 +85,7 @@
                                      (apply list -1.0  ; for the max element; faster than removing it
                                             (fpexp (- log-x0 max-log-x))
                                             (fpexp (- log-x1 max-log-x))
-                                            (map (lambda (log-x) (fpexp (- log-x max-log-x)))
+                                            (map (lambda (log-x) (assume ((log-x float)) (fpexp (- log-x max-log-x))))
                                                  log-xs)))])
                             ;; Yes, we subtract 1.0 and then add 1.0 before taking the log; this
                             ;; helps with precision a bit when s is near zero

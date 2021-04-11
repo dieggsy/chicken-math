@@ -6,7 +6,7 @@
   (import scheme
           chicken.type
           chicken.flonum
-          (only chicken.base define-values let-values assert)
+          (only chicken.base define-values let-values assert include)
           math.flonum.functions
           math.flonum.constants
           math.flonum.exp
@@ -14,6 +14,8 @@
           math.flonum.error
           math.flonum.fpvector
           math.flonum.utils)
+
+  (include "math-types.scm")
   ;; ---------------------------------------------------------------------------------------------------
   ;; sqrt(1+x)-1
 
@@ -163,7 +165,7 @@
   ;; Exponential with high-precision bases
 
 
-  (: make-fpexpt (ratnum -> (float -> float)))
+  (: make-fpexpt (exact-rational -> (float -> float)))
   (define (make-fpexpt b)
     (assert (positive? b) 'make-fpexpt "not a positive ratnum:" b)
     (define b-hi (exact->inexact b))

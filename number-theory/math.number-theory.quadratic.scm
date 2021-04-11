@@ -8,7 +8,9 @@
           (only srfi-1 filter)
           math.racket-shim)
 
-  (: complex-quadratic-solutions  (cplxnum cplxnum cplxnum -> (list-of cplxnum)))
+  (include "math-types.scm")
+
+  (: complex-quadratic-solutions  (number number number -> (list-of number)))
   (define (complex-quadratic-solutions a b c)
     ;; Return list of solutions to a a x^2 + b x + c = 0
     ;; where a,b and c are complex numbers.
@@ -35,7 +37,7 @@
                [q    (/ (+ b (* sign sqrt-d)) -2)])
           (list (/ q a) (/ c q)))])))
 
-  (: quadratic-solutions (number number number -> (list-of number)))
+  (: quadratic-solutions (real real real -> (list-of real)))
   (define (quadratic-solutions a b c)
     ;; return list of solutions to a a x^2 + b x + c = 0
     (let ([d (- (* b b) (* 4 a c))])
@@ -47,12 +49,12 @@
           (list (/ (- (- b) sqrt-d) (* 2 a))
                 (/ (+ (- b) sqrt-d) (* 2 a))))])))
 
-  (: quadratic-integer-solutions (number number number -> (list-of integer)))
+  (: quadratic-integer-solutions (real real real -> (list-of integer)))
   (define (quadratic-integer-solutions a b c)
     ;; return list of integer solutions to a x^2 + b x + c = 0
     (filter (conjoin exact? integer?) (quadratic-solutions a b c)))
 
-  (: quadratic-natural-solutions (number number number -> (list-of integer)))
+  (: quadratic-natural-solutions (real real real -> (list-of integer)))
   (define (quadratic-natural-solutions a b c)
     ;; return list of nonnegative-integer solutions to a x^2 + b x + c = 0
     (filter natural? (quadratic-solutions a b c))))
