@@ -6,4 +6,7 @@
 *.so
 *.static.o
 *.types
+!math.base.types
+!math.flonum.types
+!math.number-theory.types
 salmonella.log

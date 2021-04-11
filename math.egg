@@ -17,7 +17,7 @@
 
   ;; Base
   (extension math.base ;; 2021-02-05
-             (types-file)
+             (types-file (predefined))
              (source "base/math.base.scm")
              (component-dependencies math.base.random
                                      math.base.constants
@@ -40,7 +40,7 @@
   ;; Flonum
   ;; TODO: bf parts of flonum
   (extension math.flonum
-             (types-file)
+             (types-file (predefined))
              (source "flonum/math.flonum.scm")
              (component-dependencies math.flonum.utils
                                      math.flonum.bits
@@ -185,7 +185,7 @@
 
   ;; Number theory
   (extension math.number-theory
-             (types-file)
+             (types-file (predefined))
              (source "number-theory/math.number-theory.scm")
              (component-dependencies math.number-theory.divisibility
                                      math.number-theory.modular-arithmetic
