@@ -1,0 +1,3 @@
+[submodule "racket-math"]
+	path = math
+	url = https://github.com/racket/math
