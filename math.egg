@@ -5,7 +5,7 @@
  (license "GPL-3.0")
  (component-options
   (csc-options -O3 -C -O3 -C -Wfatal-errors)
-  ;; (csc-options -strict-types -cc tcc -ld tcc -d3 -C -Wfatal-errors)
+  ;; (csc-options -cc tcc -ld tcc -d3 -C -Wfatal-errors)
   )
  (dependencies srfi-1 r6rs-bytevectors miscmacros srfi-133 srfi-42)
  (test-dependencies test srfi-1)
@@ -118,6 +118,9 @@
                                      math.flonum.exp
                                      math.flonum.error
                                      math.flonum.fpvector
+                                     math.flonum.polyfun
+                                     math.flonum.expansion.base
+                                     math.flonum.expansion.exp-reduction
                                      math.racket-shim))
   (extension math.flonum.more-functions ;; 2021-02-01
              (types-file)
