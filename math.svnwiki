@@ -2651,6 +2651,8 @@ GPL-3.0
 
 === Version History
 
+; 0.3.4 : Reflect upstream changes
+; 0.3.3 : Remove -strict-types from build for time being
 ; 0.3.2 : Correct types and types files
 ; 0.3.1 : Ensure to export all api procedures, correct module dependencies for build
 ; 0.3.0 : Finish (math base) and (math flonum), bug and typo fixes, credit original authors
