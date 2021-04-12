@@ -14,8 +14,7 @@
           math.flonum.error
           math.flonum.fpvector
           math.flonum.polyfun
-          math.flonum.expansion.base
-          math.flonum.expansion.exp-reduction)
+          math.flonum.expansion.base)
 
   (: fplog1p (float -> float))
   ;; Computes the value of log(1+x) in a way that is accurate for small x

@@ -120,7 +120,6 @@
                                      math.flonum.fpvector
                                      math.flonum.polyfun
                                      math.flonum.expansion.base
-                                     math.flonum.expansion.exp-reduction
                                      math.racket-shim))
   (extension math.flonum.more-functions ;; 2021-02-01
              (types-file)
