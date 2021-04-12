@@ -1,40 +1,40 @@
 (module math.number-theory.base (solve-chinese
 
-                                    ;; primes
-                                    nth-prime
-                                    random-prime
-                                    next-prime
-                                    next-primes
-                                    prev-prime
-                                    prev-primes
-                                    prime?
-                                    odd-prime?
-                                    factorize
-                                    defactorize
-                                    divisors
-                                    prime-divisors
-                                    prime-exponents
-                                    prime-omega
+                                 ;; primes
+                                 nth-prime
+                                 random-prime
+                                 next-prime
+                                 next-primes
+                                 prev-prime
+                                 prev-primes
+                                 prime?
+                                 odd-prime?
+                                 factorize
+                                 defactorize
+                                 divisors
+                                 prime-divisors
+                                 prime-exponents
+                                 prime-omega
 
-                                    ;; roots
-                                    integer-root
-                                    integer-root/remainder
+                                 ;; roots
+                                 integer-root
+                                 integer-root/remainder
 
-                                    ;; Powers
-                                    max-dividing-power
-                                    perfect-power
-                                    perfect-power?
-                                    prime-power
-                                    prime-power?
-                                    odd-prime-power?
-                                    as-power
-                                    perfect-square
+                                 ;; Powers
+                                 max-dividing-power
+                                 perfect-power
+                                 perfect-power?
+                                 prime-power
+                                 prime-power?
+                                 odd-prime-power?
+                                 as-power
+                                 perfect-square
 
-                                    ;; number theoretic functions
-                                    totient
-                                    moebius-mu
-                                    divisor-sum
-                                    mangoldt-lambda)
+                                 ;; number theoretic functions
+                                 totient
+                                 moebius-mu
+                                 divisor-sum
+                                 mangoldt-lambda)
 
   (import scheme
           chicken.type
@@ -366,13 +366,13 @@
          [(simple-perfect-power n)
           => (lambda (base-and-exp)
                (assume ((base-and-exp (list integer integer)))
-                (cond
-                [(prime? (car base-and-exp)) (list base-and-exp)]
-                [else (map (lambda (b-and-e)
-                             (assume ((b-and-e (list integer integer)))
-                              (list (car b-and-e)
-                                   (* (cadr base-and-exp) (cadr b-and-e)))))
-                           (pollard-factorize (car base-and-exp)))])))]
+                 (cond
+                  [(prime? (car base-and-exp)) (list base-and-exp)]
+                  [else (map (lambda (b-and-e)
+                               (assume ((b-and-e (list integer integer)))
+                                 (list (car b-and-e)
+                                       (* (cadr base-and-exp) (cadr b-and-e)))))
+                             (pollard-factorize (car base-and-exp)))])))]
          [else
           (let loop ([divisor (pollard n)])
             (if divisor
@@ -449,7 +449,7 @@
       (and p/e
            (odd? (first p/e)))))
 
-(: perfect-power? (integer -> boolean))
+  (: perfect-power? (integer -> boolean))
   (define (perfect-power? a)
     (and (not (zero? a))
          (let-values ([(base n) (as-power a)])
@@ -560,7 +560,7 @@
                                    (let loop ((g d))
                                      (if (not (< x (expt g y)))
                                          g
-                                       (loop (- g 1))))])))))))])))]))
+                                         (loop (- g 1))))])))))))])))]))
 
 
   (: simple-as-power (integer -> integer integer))
@@ -662,9 +662,9 @@
                         [n 0]
                         [p-to-n 1])
                (assume ((sum integer) (n integer) (p-to-n integer))
-                (cond [(= n e) sum]
-                     [else (let ([t (* p p-to-n)])
-                             (loop (+ t sum) (+ n 1) t))]))))
+                 (cond [(= n e) sum]
+                       [else (let ([t (* p p-to-n)])
+                               (loop (+ t sum) (+ n 1) t))]))))
            (define (divisor-sumk p e)
              (let ([p-to-k (expt p k)])
                (let loop ([sum 1]

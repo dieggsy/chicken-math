@@ -4,7 +4,7 @@
  (category math)
  (license "GPL-3.0")
  (component-options
-  (csc-options -strict-types -O3 -C -O3 -C -Wfatal-errors)
+  (csc-options -O3 -C -O3 -C -Wfatal-errors)
   ;; (csc-options -strict-types -cc tcc -ld tcc -d3 -C -Wfatal-errors)
   )
  (dependencies srfi-1 r6rs-bytevectors miscmacros srfi-133 srfi-42)
