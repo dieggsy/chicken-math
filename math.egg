@@ -110,7 +110,7 @@
                                      math.flonum.polyfun
                                      math.flonum.log
                                      math.polynomial.chebyshev))
-  (extension math.flonum.log ;; 2021-02-01
+  (extension math.flonum.log ;; 2021-04-12
              (types-file)
              (source "flonum/math.flonum.log.scm")
              (component-dependencies math.flonum.functions
@@ -215,7 +215,7 @@
              (source "number-theory/math.number-theory.divisibility.scm")
              (component-dependencies math.racket-shim))
 
-  (extension math.number-theory.modular-arithmetic
+  (extension math.number-theory.modular-arithmetic ;; 2021-04-12
              (types-file)
              (source "number-theory/math.number-theory.modular-arithmetic.scm")
              (component-dependencies math.number-theory.divisibility)
