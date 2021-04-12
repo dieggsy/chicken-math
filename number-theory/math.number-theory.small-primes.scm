@@ -10,6 +10,9 @@
 
   (include-relative "bit-vector-unsafe.scm")
 
+  ;; Primality testing using a Sieve of Atkin
+  ;; https://en.wikipedia.org/wiki/Sieve_of_Atkin
+
   (: non-235 (list-of fixnum))
   (define non-235 '(1 7 11 13 17 19 23 29 31 37 41 43 47 49 53 59))
 
